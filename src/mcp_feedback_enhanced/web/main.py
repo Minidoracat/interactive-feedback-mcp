@@ -26,7 +26,7 @@ from fastapi.templating import Jinja2Templates
 import uvicorn
 
 from .models import WebFeedbackSession, FeedbackResult
-from .routes import setup_routes
+from .routes import setup_routes, setup_event_driven_routes
 from .utils import find_free_port, get_browser_opener
 from ..debug import web_debug_log as debug_log
 from ..i18n import get_i18n_manager
@@ -81,7 +81,11 @@ class WebUIManager:
         # 設置路由
         setup_routes(self)
 
+        # 設置事件驅動路由
+        setup_event_driven_routes(self)
+
         debug_log(f"WebUIManager 初始化完成，將在 {self.host}:{self.port} 啟動")
+        debug_log("✅ 事件驅動路由已設置")
 
     def _setup_static_files(self):
         """設置靜態文件服務"""
@@ -228,13 +232,31 @@ class WebUIManager:
         """向所有活躍標籤頁廣播消息"""
         if not self.current_session or not self.current_session.websocket:
             debug_log("沒有活躍的 WebSocket 連接，無法廣播消息")
+            # 如果是會話更新消息，設置待更新標記
+            if message.get('type') == 'session_updated':
+                self._pending_session_update = True
+                debug_log("⚠️ 設置會話更新待更新標記")
             return
 
         try:
-            await self.current_session.websocket.send_json(message)
-            debug_log(f"已廣播消息到活躍標籤頁: {message.get('type', 'unknown')}")
+            # 檢查 WebSocket 連接狀態
+            websocket = self.current_session.websocket
+            if hasattr(websocket, 'client_state') and websocket.client_state.DISCONNECTED:
+                debug_log("WebSocket 已斷開，無法廣播消息")
+                # 如果是會話更新消息，設置待更新標記
+                if message.get('type') == 'session_updated':
+                    self._pending_session_update = True
+                    debug_log("⚠️ WebSocket 斷開，設置會話更新待更新標記")
+                return
+
+            await websocket.send_json(message)
+            debug_log(f"✅ 已廣播消息到活躍標籤頁: {message.get('type', 'unknown')}")
         except Exception as e:
-            debug_log(f"廣播消息失敗: {e}")
+            debug_log(f"❌ 廣播消息失敗: {e}")
+            # 如果是會話更新消息，設置待更新標記
+            if message.get('type') == 'session_updated':
+                self._pending_session_update = True
+                debug_log("⚠️ 廣播失敗，設置會話更新待更新標記")
 
     def start_server(self):
         """啟動 Web 伺服器"""
@@ -351,29 +373,41 @@ class WebUIManager:
                 old_websocket = self._old_websocket_for_update
                 new_session = self._new_session_for_update
 
-                # 檢查舊連接是否仍然有效
-                if old_websocket and not old_websocket.client_state.DISCONNECTED:
-                    try:
-                        # 發送會話更新通知
-                        await old_websocket.send_json({
-                            "type": "session_updated",
-                            "message": "新會話已創建，正在更新頁面內容",
-                            "session_info": {
-                                "project_directory": new_session.project_directory,
-                                "summary": new_session.summary,
-                                "session_id": new_session.session_id
-                            }
-                        })
-                        debug_log("已通過舊 WebSocket 連接發送會話更新通知")
+                session_update_sent = False
 
-                        # 延遲一小段時間讓前端處理消息
-                        await asyncio.sleep(0.2)
+                # 檢查舊連接是否仍然有效
+                if old_websocket:
+                    try:
+                        # 檢查 WebSocket 連接狀態
+                        if hasattr(old_websocket, 'client_state') and old_websocket.client_state.DISCONNECTED:
+                            debug_log("舊 WebSocket 已斷開，無法發送會話更新通知")
+                        else:
+                            # 嘗試發送會話更新通知
+                            await old_websocket.send_json({
+                                "type": "session_updated",
+                                "message": "新會話已創建，正在更新頁面內容",
+                                "session_info": {
+                                    "project_directory": new_session.project_directory,
+                                    "summary": new_session.summary,
+                                    "session_id": new_session.session_id
+                                }
+                            })
+                            debug_log("✅ 已通過舊 WebSocket 連接發送會話更新通知")
+                            session_update_sent = True
+
+                            # 延遲一小段時間讓前端處理消息
+                            await asyncio.sleep(0.2)
 
                     except Exception as send_error:
-                        debug_log(f"發送會話更新通知失敗: {send_error}")
+                        debug_log(f"❌ 發送會話更新通知失敗: {send_error}")
 
-                # 安全關閉舊連接
-                await self._safe_close_websocket(old_websocket)
+                    # 安全關閉舊連接
+                    await self._safe_close_websocket(old_websocket)
+
+                # 如果沒有成功發送會話更新，設置待更新標記
+                if not session_update_sent:
+                    self._pending_session_update = True
+                    debug_log("⚠️ 會話更新通知未成功發送，設置待更新標記")
 
                 # 清理臨時變數
                 delattr(self, '_old_websocket_for_update')

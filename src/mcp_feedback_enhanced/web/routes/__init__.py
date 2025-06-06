@@ -8,5 +8,6 @@ Web UI 路由模組
 """
 
 from .main_routes import setup_routes
+from .event_driven_routes import setup_event_driven_routes
 
-__all__ = ['setup_routes'] 
+__all__ = ['setup_routes', 'setup_event_driven_routes']

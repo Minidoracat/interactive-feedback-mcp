@@ -25,6 +25,8 @@ from .event_handlers import (
     StateChangeEventHandler, SystemEventHandler
 )
 from .architecture_manager import ArchitectureManager, get_architecture_manager, initialize_architecture, shutdown_architecture
+from .websocket_handler import WebSocketHandler
+from .webui_adapter import EventDrivenWebUIAdapter, get_webui_adapter, initialize_webui_adapter, shutdown_webui_adapter
 
 __all__ = [
     # 基礎設施
@@ -64,5 +66,12 @@ __all__ = [
     'ArchitectureManager',
     'get_architecture_manager',
     'initialize_architecture',
-    'shutdown_architecture'
+    'shutdown_architecture',
+
+    # WebSocket 和適配器
+    'WebSocketHandler',
+    'EventDrivenWebUIAdapter',
+    'get_webui_adapter',
+    'initialize_webui_adapter',
+    'shutdown_webui_adapter'
 ]
