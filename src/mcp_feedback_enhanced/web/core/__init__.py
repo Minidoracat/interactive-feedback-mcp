@@ -24,6 +24,7 @@ from .event_handlers import (
     ConnectionEventHandler, SessionEventHandler, FeedbackEventHandler,
     StateChangeEventHandler, SystemEventHandler
 )
+from .architecture_manager import ArchitectureManager, get_architecture_manager, initialize_architecture, shutdown_architecture
 
 __all__ = [
     # 基礎設施
@@ -57,5 +58,11 @@ __all__ = [
     'SessionEventHandler',
     'FeedbackEventHandler',
     'StateChangeEventHandler',
-    'SystemEventHandler'
+    'SystemEventHandler',
+
+    # 架構管理器
+    'ArchitectureManager',
+    'get_architecture_manager',
+    'initialize_architecture',
+    'shutdown_architecture'
 ]
