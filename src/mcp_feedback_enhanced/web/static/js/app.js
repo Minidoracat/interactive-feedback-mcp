@@ -20,7 +20,7 @@ class TabManager {
     }
 
     generateTabId() {
-        return `tab_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        return `tab_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     }
 
     init() {
@@ -800,9 +800,29 @@ class FeedbackApp {
      * 檢查是否可以提交回饋
      */
     canSubmitFeedback() {
-        const canSubmit = this.feedbackState === 'waiting_for_feedback' && this.isConnected;
-        console.log(`🔍 檢查提交權限: feedbackState=${this.feedbackState}, isConnected=${this.isConnected}, canSubmit=${canSubmit}`);
+        // 臨時修復：允許在等待回饋狀態下輸入，即使 WebSocket 未連接
+        // 這樣用戶可以先輸入內容，等連接建立後再提交
+        const canInput = this.feedbackState === 'waiting_for_feedback';
+        const canSubmit = canInput && this.isConnected;
+        console.log(`🔍 檢查提交權限: feedbackState=${this.feedbackState}, isConnected=${this.isConnected}, canInput=${canInput}, canSubmit=${canSubmit}`);
         return canSubmit;
+    }
+
+    /**
+     * 檢查是否可以輸入回饋（允許離線輸入）
+     */
+    canInputFeedback() {
+        return this.feedbackState === 'waiting_for_feedback';
+    }
+
+    /**
+     * 檢查是否有待處理的會話更新
+     */
+    checkForPendingUpdates() {
+        console.log('🔍 檢查是否有待處理的會話更新...');
+        // 這個方法會在 WebSocket 連接建立後被調用
+        // 服務器會自動發送 session_updated 或 status_update 消息
+        // 所以這裡只需要記錄日誌，實際處理在消息處理器中完成
     }
 
     /**
@@ -830,30 +850,30 @@ class FeedbackApp {
             }
         }
 
-        // 更新回饋文字框狀態
+        // 更新回饋文字框狀態（允許離線輸入）
         if (this.feedbackText) {
-            this.feedbackText.disabled = !this.canSubmitFeedback();
+            this.feedbackText.disabled = !this.canInputFeedback();
         }
 
-        // 更新合併模式的回饋文字框狀態
+        // 更新合併模式的回饋文字框狀態（允許離線輸入）
         const combinedFeedbackText = document.getElementById('combinedFeedbackText');
         if (combinedFeedbackText) {
-            combinedFeedbackText.disabled = !this.canSubmitFeedback();
+            combinedFeedbackText.disabled = !this.canInputFeedback();
         }
 
-        // 更新圖片上傳狀態
+        // 更新圖片上傳狀態（允許離線上傳）
         if (this.imageUploadArea) {
-            if (this.canSubmitFeedback()) {
+            if (this.canInputFeedback()) {
                 this.imageUploadArea.classList.remove('disabled');
             } else {
                 this.imageUploadArea.classList.add('disabled');
             }
         }
 
-        // 更新合併模式的圖片上傳狀態
+        // 更新合併模式的圖片上傳狀態（允許離線上傳）
         const combinedImageUploadArea = document.getElementById('combinedImageUploadArea');
         if (combinedImageUploadArea) {
-            if (this.canSubmitFeedback()) {
+            if (this.canInputFeedback()) {
                 combinedImageUploadArea.classList.remove('disabled');
             } else {
                 combinedImageUploadArea.classList.add('disabled');
@@ -949,9 +969,9 @@ class FeedbackApp {
         // 確保 WebSocket URL 格式正確
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const host = window.location.host;
-        const wsUrl = `${protocol}//${host}/ws`;
+        const wsUrl = `${protocol}//${host}/ws/v2`; // 🔄 遷移到事件驅動端點
 
-        console.log('嘗試連接 WebSocket:', wsUrl);
+        console.log('🔗 嘗試連接事件驅動 WebSocket:', wsUrl);
         this.updateConnectionStatus('connecting', '連接中...');
 
         try {
@@ -961,18 +981,37 @@ class FeedbackApp {
                 this.websocket = null;
             }
 
+            // 初始化 API 客戶端（如果尚未初始化）
+            if (!this.apiClient) {
+                // 檢查 EventDrivenAPIClient 是否可用
+                if (typeof EventDrivenAPIClient === 'undefined') {
+                    console.error('❌ EventDrivenAPIClient 未定義，請檢查 api-client.js 是否正確載入');
+                    this.updateConnectionStatus('error', 'API 客戶端載入失敗');
+                    return;
+                }
+
+                this.apiClient = new EventDrivenAPIClient();
+                this.healthMonitor = new HealthMonitor(this.apiClient);
+                console.log('✅ 事件驅動 API 客戶端已初始化');
+            }
+
             this.websocket = new WebSocket(wsUrl);
 
             this.websocket.onopen = () => {
                 this.isConnected = true;
                 this.updateConnectionStatus('connected', '已連接');
-                console.log('WebSocket 連接已建立');
+                console.log('✅ 事件驅動 WebSocket 連接已建立');
 
                 // 重置重連計數器
                 this.reconnectAttempts = 0;
 
                 // 開始 WebSocket 心跳
                 this.startWebSocketHeartbeat();
+
+                // 開始健康監控
+                if (this.healthMonitor) {
+                    this.healthMonitor.startMonitoring();
+                }
 
                 // 連接成功後，請求會話狀態
                 this.requestSessionStatus();
@@ -995,10 +1034,15 @@ class FeedbackApp {
 
             this.websocket.onclose = (event) => {
                 this.isConnected = false;
-                console.log('WebSocket 連接已關閉, code:', event.code, 'reason:', event.reason);
+                console.log('🔌 事件驅動 WebSocket 連接已關閉, code:', event.code, 'reason:', event.reason);
 
                 // 停止心跳
                 this.stopWebSocketHeartbeat();
+
+                // 停止健康監控
+                if (this.healthMonitor) {
+                    this.healthMonitor.stopMonitoring();
+                }
 
                 // 重置回饋狀態，避免卡在處理狀態
                 if (this.feedbackState === 'processing') {
@@ -1009,6 +1053,10 @@ class FeedbackApp {
                 if (event.code === 4004) {
                     // 沒有活躍會話
                     this.updateConnectionStatus('disconnected', '沒有活躍會話');
+                } else if (event.code === 4005) {
+                    // 架構初始化失敗
+                    this.updateConnectionStatus('error', '架構初始化失敗');
+                    this.showMessage('事件驅動架構初始化失敗，請刷新頁面重試', 'error');
                 } else {
                     this.updateConnectionStatus('disconnected', '已斷開');
 
@@ -1016,25 +1064,25 @@ class FeedbackApp {
                     if (event.code !== 1000 && this.reconnectAttempts < this.maxReconnectAttempts) {
                         this.reconnectAttempts++;
                         const delay = Math.min(3000 * this.reconnectAttempts, 15000); // 最大延遲15秒
-                        console.log(`${delay/1000}秒後嘗試重連... (第${this.reconnectAttempts}次)`);
+                        console.log(`⏳ ${delay/1000}秒後嘗試重連... (第${this.reconnectAttempts}次)`);
                         setTimeout(() => {
-                            console.log(`🔄 開始重連 WebSocket... (第${this.reconnectAttempts}次)`);
+                            console.log(`🔄 開始重連事件驅動 WebSocket... (第${this.reconnectAttempts}次)`);
                             this.setupWebSocket();
                         }, delay);
                     } else if (this.reconnectAttempts >= this.maxReconnectAttempts) {
                         console.log('❌ 達到最大重連次數，停止重連');
-                        this.showMessage('WebSocket 連接失敗，請刷新頁面重試', 'error');
+                        this.showMessage('事件驅動 WebSocket 連接失敗，請刷新頁面重試', 'error');
                     }
                 }
             };
 
             this.websocket.onerror = (error) => {
-                console.error('WebSocket 錯誤:', error);
+                console.error('❌ 事件驅動 WebSocket 錯誤:', error);
                 this.updateConnectionStatus('error', '連接錯誤');
             };
 
         } catch (error) {
-            console.error('WebSocket 連接失敗:', error);
+            console.error('❌ 事件驅動 WebSocket 連接失敗:', error);
             this.updateConnectionStatus('error', '連接失敗');
         }
     }
@@ -1073,11 +1121,13 @@ class FeedbackApp {
     }
 
     handleWebSocketMessage(data) {
-        console.log('收到 WebSocket 消息:', data);
+        console.log('📨 收到事件驅動 WebSocket 消息:', data);
 
+        // 事件驅動消息處理
         switch (data.type) {
             case 'connection_established':
-                console.log('WebSocket 連接確認');
+                console.log('✅ 事件驅動連接確認');
+                this.handleConnectionEstablished(data);
                 break;
             case 'heartbeat_response':
                 // 心跳回應，更新標籤頁活躍狀態
@@ -1095,19 +1145,100 @@ class FeedbackApp {
                 this.enableCommandInput();
                 break;
             case 'feedback_received':
-                console.log('回饋已收到');
+                console.log('✅ 回饋已收到');
                 this.handleFeedbackReceived(data);
                 break;
             case 'status_update':
-                console.log('狀態更新:', data.status_info);
+                console.log('📊 狀態更新:', data.status_info);
                 this.handleStatusUpdate(data.status_info);
                 break;
             case 'session_updated':
                 console.log('🔄 收到會話更新消息:', data.session_info);
-                this.handleSessionUpdated(data);
+                this.handleEventDrivenSessionUpdate(data);
+                break;
+            case 'state_changed':
+                console.log('🔄 狀態變更:', data);
+                this.handleStateChange(data);
                 break;
             default:
-                console.log('未處理的消息類型:', data.type);
+                console.log('⚠️ 未處理的事件驅動消息類型:', data.type);
+        }
+    }
+
+    /**
+     * 處理事件驅動連接建立
+     */
+    handleConnectionEstablished(data) {
+        console.log('🔗 事件驅動連接已建立:', data);
+
+        // 儲存連接 ID
+        if (data.connection_id) {
+            this.connectionId = data.connection_id;
+            console.log(`📋 連接 ID: ${this.connectionId}`);
+        }
+
+        // 檢查是否有待處理的會話更新
+        this.checkForPendingUpdates();
+
+        // 同步狀態
+        this.syncStateWithServer();
+    }
+
+    /**
+     * 處理狀態變更事件
+     */
+    handleStateChange(data) {
+        console.log('🔄 處理狀態變更:', data);
+
+        const { state_type, new_state, session_id } = data;
+
+        switch (state_type) {
+            case 'session_state':
+                this.handleSessionStateChange(new_state, session_id);
+                break;
+            case 'connection_state':
+                this.handleConnectionStateChange(new_state);
+                break;
+            default:
+                console.log(`⚠️ 未知狀態類型: ${state_type}`);
+        }
+    }
+
+    /**
+     * 處理會話狀態變更
+     */
+    handleSessionStateChange(newState, sessionId) {
+        console.log(`📋 會話狀態變更: ${newState} (會話: ${sessionId})`);
+
+        switch (newState) {
+            case 'active':
+                this.setFeedbackState('waiting_for_feedback', sessionId);
+                break;
+            case 'feedback_submitted':
+                this.setFeedbackState('feedback_submitted', sessionId);
+                break;
+            case 'completed':
+                this.setFeedbackState('waiting_for_feedback', sessionId);
+                break;
+        }
+    }
+
+    /**
+     * 處理連接狀態變更
+     */
+    handleConnectionStateChange(newState) {
+        console.log(`🔌 連接狀態變更: ${newState}`);
+
+        switch (newState) {
+            case 'connected':
+                this.updateConnectionStatus('connected', '已連接');
+                break;
+            case 'disconnected':
+                this.updateConnectionStatus('disconnected', '已斷開');
+                break;
+            case 'error':
+                this.updateConnectionStatus('error', '連接錯誤');
+                break;
         }
     }
 
@@ -1124,6 +1255,140 @@ class FeedbackApp {
 
         // 重構：不再自動關閉頁面，保持持久性
         console.log('反饋已提交，頁面保持開啟狀態');
+    }
+
+    /**
+     * 事件驅動的會話更新處理器
+     */
+    handleEventDrivenSessionUpdate(data) {
+        console.log('🔄 處理事件驅動會話更新:', data.session_info);
+
+        // 顯示更新通知
+        this.showUpdateNotification(data.message || '會話已更新，正在智能更新內容...');
+
+        // 智能局部更新
+        this.performSmartUpdate(data.session_info);
+    }
+
+    /**
+     * 執行智能局部更新
+     */
+    async performSmartUpdate(sessionInfo) {
+        console.log('🧠 開始智能局部更新...');
+
+        try {
+            // 1. 更新會話信息
+            if (sessionInfo) {
+                const newSessionId = sessionInfo.session_id;
+                console.log(`📋 會話 ID 更新: ${this.currentSessionId} -> ${newSessionId}`);
+
+                // 重置回饋狀態為等待新回饋
+                this.setFeedbackState('waiting_for_feedback', newSessionId);
+                this.currentSessionId = newSessionId;
+
+                // 更新頁面標題
+                if (sessionInfo.project_directory) {
+                    const projectName = sessionInfo.project_directory.split(/[/\\]/).pop();
+                    document.title = `MCP Feedback - ${projectName}`;
+                }
+            }
+
+            // 2. 同步狀態
+            await this.syncStateWithServer();
+
+            // 3. 智能更新 UI 組件
+            await this.updateUIComponentsSmart(sessionInfo);
+
+            // 4. 重置表單狀態
+            this.resetFeedbackForm();
+
+            // 5. 更新狀態指示器
+            this.updateStatusIndicators();
+
+            console.log('✅ 智能局部更新完成');
+
+        } catch (error) {
+            console.error('❌ 智能局部更新失敗:', error);
+            // 備用方案：使用傳統局部更新
+            this.refreshPageContent();
+        }
+    }
+
+    /**
+     * 智能更新 UI 組件
+     */
+    async updateUIComponentsSmart(sessionInfo) {
+        console.log('🎨 智能更新 UI 組件...');
+
+        // 使用事件驅動 API 獲取最新數據
+        const result = await this.apiClient.get('/session/current');
+
+        if (result.success && result.data) {
+            const latestData = result.data;
+
+            // 更新 AI 摘要內容
+            if (latestData.summary) {
+                this.updateAISummaryContent(latestData.summary);
+            }
+
+            // 更新項目信息
+            if (latestData.project_directory) {
+                this.updateProjectInfo(latestData.project_directory);
+            }
+
+            console.log('✅ UI 組件智能更新完成');
+        } else {
+            console.warn('⚠️ 無法獲取最新會話數據，使用傳統更新方式');
+            throw new Error('API 請求失敗');
+        }
+    }
+
+    /**
+     * 同步狀態與服務器
+     */
+    async syncStateWithServer() {
+        console.log('🔄 同步狀態與服務器...');
+
+        try {
+            // 使用現有的 /session/current 端點而不是不存在的 /session/status
+            const result = await this.apiClient.get('/session/current');
+
+            if (result.success && result.data) {
+                const sessionData = result.data.session; // /session/current 返回的是 {status, session}
+                console.log('📊 服務器會話數據:', sessionData);
+
+                if (sessionData) {
+                    // 同步會話狀態
+                    if (sessionData.session_id && sessionData.session_id !== this.currentSessionId) {
+                        this.currentSessionId = sessionData.session_id;
+                        console.log(`📋 同步會話 ID: ${this.currentSessionId}`);
+                    }
+
+                    // 根據會話狀態推斷回饋狀態
+                    if (sessionData.status) {
+                        let newFeedbackState = 'waiting_for_feedback';
+                        switch (sessionData.status) {
+                            case 'feedback_submitted':
+                                newFeedbackState = 'feedback_submitted';
+                                break;
+                            case 'active':
+                            case 'waiting':
+                                newFeedbackState = 'waiting_for_feedback';
+                                break;
+                        }
+
+                        if (newFeedbackState !== this.feedbackState) {
+                            this.setFeedbackState(newFeedbackState);
+                            console.log(`🔄 同步回饋狀態: ${this.feedbackState}`);
+                        }
+                    }
+                }
+
+                console.log('✅ 狀態同步完成');
+            }
+        } catch (error) {
+            console.warn('⚠️ 狀態同步失敗:', error);
+        }
     }
 
     handleSessionUpdated(data) {
@@ -1160,6 +1425,76 @@ class FeedbackApp {
         console.log('✅ 會話更新處理完成');
     }
 
+    /**
+     * 顯示更新通知
+     */
+    showUpdateNotification(message = '內容已更新') {
+        console.log('📢 顯示更新通知:', message);
+
+        // 創建更新通知元素
+        const notification = document.createElement('div');
+        notification.className = 'update-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1002;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.3);
+            max-width: 320px;
+            word-wrap: break-word;
+            animation: slideInRight 0.3s ease-out;
+            border-left: 4px solid #2E7D32;
+        `;
+
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 16px;">🔄</span>
+                <span>${message}</span>
+            </div>
+        `;
+
+        document.body.appendChild(notification);
+
+        // 3秒後自動移除
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }
+        }, 3000);
+    }
+
+    /**
+     * 更新項目信息
+     */
+    updateProjectInfo(projectDirectory) {
+        console.log('📁 更新項目信息:', projectDirectory);
+
+        // 更新頁面標題
+        const projectName = projectDirectory.split(/[/\\]/).pop();
+        document.title = `MCP Feedback - ${projectName}`;
+
+        // 更新項目目錄顯示
+        const projectInfoElements = document.querySelectorAll('.project-info, [data-project-directory]');
+        projectInfoElements.forEach(element => {
+            if (element.hasAttribute('data-project-directory')) {
+                element.textContent = projectDirectory;
+            } else {
+                element.innerHTML = `<span data-i18n="app.projectDirectory">專案目錄</span>: ${projectDirectory}`;
+            }
+        });
+
+        console.log('✅ 項目信息更新完成');
+    }
+
     async refreshPageContent() {
         console.log('🔄 局部更新頁面內容...');
 
@@ -1185,42 +1520,70 @@ class FeedbackApp {
     }
 
     /**
-     * 局部更新頁面內容，避免整頁刷新
+     * 局部更新頁面內容，避免整頁刷新（事件驅動版本）
      */
     async updatePageContentPartially() {
-        console.log('🔄 開始局部更新頁面內容...');
+        console.log('🔄 開始事件驅動局部更新頁面內容...');
 
         try {
-            // 1. 獲取最新的會話資料
-            const response = await fetch('/api/current-session');
-            if (!response.ok) {
-                throw new Error(`API 請求失敗: ${response.status}`);
+            // 1. 使用事件驅動 API 獲取最新的會話資料
+            const result = await this.apiClient.get('/session/current');
+
+            if (!result.success) {
+                // 備用方案：使用傳統 API
+                console.warn('⚠️ 事件驅動 API 失敗，使用傳統 API');
+                const response = await fetch('/api/current-session');
+                if (!response.ok) {
+                    throw new Error(`API 請求失敗: ${response.status}`);
+                }
+                const sessionData = await response.json();
+                this.processSessionData(sessionData);
+                return;
             }
 
-            const sessionData = await response.json();
-            console.log('📥 獲取到最新會話資料:', sessionData);
+            const sessionData = result.data;
+            console.log('📥 獲取到最新會話資料 (事件驅動):', sessionData);
 
-            // 2. 更新 AI 摘要內容
-            this.updateAISummaryContent(sessionData.summary);
+            // 2. 處理會話數據
+            this.processSessionData(sessionData);
 
-            // 3. 重置回饋表單
-            this.resetFeedbackForm();
-
-            // 4. 更新狀態指示器
-            this.updateStatusIndicators();
-
-            // 5. 更新頁面標題
-            if (sessionData.project_directory) {
-                const projectName = sessionData.project_directory.split(/[/\\]/).pop();
-                document.title = `MCP Feedback - ${projectName}`;
-            }
-
-            console.log('✅ 局部更新完成');
+            console.log('✅ 事件驅動局部更新完成');
 
         } catch (error) {
-            console.error('❌ 局部更新失敗:', error);
+            console.error('❌ 事件驅動局部更新失敗:', error);
             throw error; // 重新拋出錯誤，讓調用者處理
         }
+    }
+
+    /**
+     * 處理會話數據
+     */
+    processSessionData(sessionData) {
+        console.log('📊 處理會話數據...');
+
+        // 1. 更新 AI 摘要內容
+        if (sessionData.summary) {
+            this.updateAISummaryContent(sessionData.summary);
+        }
+
+        // 2. 重置回饋表單
+        this.resetFeedbackForm();
+
+        // 3. 更新狀態指示器
+        this.updateStatusIndicators();
+
+        // 4. 更新項目信息
+        if (sessionData.project_directory) {
+            this.updateProjectInfo(sessionData.project_directory);
+        }
+
+        // 5. 更新會話 ID
+        if (sessionData.session_id && sessionData.session_id !== this.currentSessionId) {
+            this.currentSessionId = sessionData.session_id;
+            console.log(`📋 更新會話 ID: ${this.currentSessionId}`);
+        }
+
+        console.log('✅ 會話數據處理完成');
     }
 
     /**
@@ -2168,7 +2531,6 @@ class FeedbackApp {
         console.log('🔄 同步狀態指示器到合併模式...');
         // 不需要手動複製，updateStatusIndicator() 會處理所有狀態指示器
     }
-
 
 }
 

@@ -1266,3 +1266,36 @@ body {
 .compatibility-hint-btn:hover {
     background: #f57c00;
 }
+
+
+
+/* 更新通知動畫 */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.update-notification {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+}

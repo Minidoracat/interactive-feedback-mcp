@@ -288,6 +288,83 @@
             gap: 10px;
             margin-top: 16px;
         }
+
+
+
+        /* 更新通知動畫 */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .update-notification {
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        /* 連接狀態指示器增強 */
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .connection-status:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .connection-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .connection-indicator.connected {
+            background: var(--success-color);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+        .connection-indicator.connecting {
+            background: var(--warning-color);
+            animation: pulse 1s infinite;
+        }
+
+        .connection-indicator.error {
+            background: var(--error-color);
+            box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
+        }
+
+        .connection-indicator.disconnected {
+            background: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -315,8 +392,11 @@
         <!-- 這裡將動態載入回饋界面內容 -->
     </div>
 
+
+
     <!-- JavaScript -->
+    <script src="/static/js/api-client.js?v=2025010801"></script>
     <script src="/static/js/i18n.js?v=2025010505"></script>
-    <script src="/static/js/app.js?v=2025010505"></script>
+    <script src="/static/js/app.js?v=2025010801"></script>
 </body>
 </html>

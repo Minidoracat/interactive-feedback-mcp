@@ -361,12 +361,12 @@ class EventBus:
     def get_statistics(self) -> Dict[str, Any]:
         """獲取事件總線統計信息"""
         handler_count = sum(len(handlers) for handlers in self._handlers.values())
-        
+
         return {
             'running': self._running,
             'total_handlers': handler_count,
             'event_types': len(self._handlers),
             'queue_size': self._event_queue.qsize(),
             'history_size': len(self._event_history),
-            'registered_events': list(self._handlers.keys())
+            'registered_events': [event_type.__name__ for event_type in self._handlers.keys()]  # 修復：使用類名而不是類對象
         }
