@@ -27,9 +27,7 @@ def main():
     server_parser = subparsers.add_parser('server', help='啟動 MCP 伺服器（預設）')
     
     # 測試命令
-    test_parser = subparsers.add_parser('test', help='執行測試')
-    test_parser.add_argument('--web', action='store_true', help='測試 Web UI (自動持續運行)')
-    test_parser.add_argument('--gui', action='store_true', help='測試 Qt GUI (快速測試)')
+    test_parser = subparsers.add_parser('test', help='執行測試 (預設為 Web UI 測試)')
     test_parser.add_argument('--enhanced', action='store_true', help='執行增強 MCP 測試 (推薦)')
     test_parser.add_argument('--scenario', help='運行特定的測試場景')
     test_parser.add_argument('--tags', help='根據標籤運行測試場景 (逗號分隔)')
@@ -110,52 +108,34 @@ def run_tests(args):
         success = asyncio.run(run_enhanced_tests())
         if not success:
             sys.exit(1)
-
-    elif args.web:
-        print("🧪 執行 Web UI 測試...")
+    # Default to Web UI test if no specific test flags are provided
+    else:
+        print("🧪 執行 Web UI 測試 (預設)...")
         from .test_web_ui import test_web_ui, interactive_demo
-        success, session_info = test_web_ui()
+        # The test_web_ui function itself should handle assertions and exit on failure.
+        # We expect it to return a tuple (success_boolean, session_info_or_none)
+        # For pytest compatibility, test_web_ui itself uses asserts.
+        # Here, we might just call it. If it fails, it will internally assert or sys.exit.
+        # However, the original structure checked success. Let's adapt.
+
+        # Assuming test_web_ui now correctly uses asserts and will raise an error on failure,
+        # or we adapt its return if necessary for this script's context.
+        # For simplicity in this refactor, let's assume test_web_ui handles its own exit/error reporting.
+        # If test_web_ui is meant to be called by pytest, it shouldn't sys.exit().
+        # The original script structure implies test_web_ui returns success status.
+        success, session_info = test_web_ui(standalone_run=True) # Pass the flag here
         if not success:
+            print("❌ Web UI 測試失敗。")
             sys.exit(1)
-        # Web UI 測試自動啟用持續模式
-        if session_info:
+
+        if session_info: # If test_web_ui starts a server for interactive demo
             print("📝 Web UI 測試完成，進入持續模式...")
             print("💡 提示：服務器將持續運行，可在瀏覽器中測試互動功能")
             print("💡 按 Ctrl+C 停止服務器")
             interactive_demo(session_info)
-    elif args.gui:
-        print("🧪 執行 Qt GUI 測試...")
-        from .test_qt_gui import test_qt_gui
-        if not test_qt_gui():
-            sys.exit(1)
-    else:
-        # 默認執行增強測試系統的快速測試
-        print("🧪 執行快速測試套件 (使用增強測試系統)...")
-        print("💡 提示：使用 --enhanced 參數可執行完整測試")
+        else:
+            print("✅ Web UI 測試通過！")
 
-        import asyncio
-        from .test_mcp_enhanced import MCPTestRunner, TestConfig
-
-        config = TestConfig.from_env()
-        config.test_timeout = 60  # 快速測試使用較短超時
-
-        runner = MCPTestRunner(config)
-
-        async def run_quick_tests():
-            try:
-                # 運行快速測試標籤
-                success = await runner.run_scenarios_by_tags(["quick"])
-                return success
-            except Exception as e:
-                print(f"❌ 快速測試執行失敗: {e}")
-                return False
-
-        success = asyncio.run(run_quick_tests())
-        if not success:
-            sys.exit(1)
-
-        print("🎉 快速測試通過！")
-        print("💡 使用 'test --enhanced' 執行完整測試套件")
 
 def show_version():
     """顯示版本資訊"""

@@ -1,73 +1,53 @@
 # MCP Feedback Enhanced
 
-**🌐 Language / 語言切換:** **English** | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
-
 **Original Author:** [Fábio Ferreira](https://x.com/fabiomlferreira) | [Original Project](https://github.com/noopstudios/interactive-feedback-mcp) ⭐
 **Enhanced Fork:** [Minidoracat](https://github.com/Minidoracat)
 **UI Design Reference:** [sanshao85/mcp-feedback-collector](https://github.com/sanshao85/mcp-feedback-collector)
 
 ## 🎯 Core Concept
 
-This is an [MCP server](https://modelcontextprotocol.io/) that establishes **feedback-oriented development workflows**, perfectly adapting to local, **SSH remote development environments**, and **WSL (Windows Subsystem for Linux) environments**. By guiding AI to confirm with users rather than making speculative operations, it can consolidate multiple tool calls into a single feedback-oriented request, dramatically reducing platform costs and improving development efficiency.
+This is an [MCP server](https://modelcontextprotocol.io/) that establishes **feedback-oriented development workflows**, primarily using a **Web UI**, making it suitable for local, **SSH remote development environments**, and **WSL (Windows Subsystem for Linux) environments**. By guiding AI to confirm with users rather than making speculative operations, it can consolidate multiple tool calls into a single feedback-oriented request, dramatically reducing platform costs and improving development efficiency.
 
 **Supported Platforms:** [Cursor](https://www.cursor.com) | [Cline](https://cline.bot) | [Windsurf](https://windsurf.com) | [Augment](https://www.augmentcode.com) | [Trae](https://www.trae.ai)
 
 ### 🔄 Workflow
 1. **AI Call** → `mcp-feedback-enhanced`
-2. **Environment Detection** → Auto-select appropriate interface
+2. **Web UI Launch** → Interface for user interaction
 3. **User Interaction** → Command execution, text feedback, image upload
 4. **Feedback Delivery** → Information returns to AI
 5. **Process Continuation** → Adjust or end based on feedback
 
 ## 🌟 Key Features
 
-### 🖥️ Dual Interface System
-- **Qt GUI**: Native experience for local environments, modular refactored design
-- **Web UI**: Modern interface for remote SSH and WSL environments, brand new architecture
-- **Smart Switching**: Auto-detect environment (local/remote/WSL) and choose optimal interface
-
-### 🎨 Brand New Interface Design (v2.1.0)
-- **Modular Architecture**: Both GUI and Web UI adopt modular design
-- **Centralized Management**: Reorganized folder structure for easier maintenance
-- **Modern Themes**: Improved visual design and user experience
-- **Responsive Layout**: Adapts to different screen sizes and window dimensions
+### 🎨 Web Interface Design
+- **Modular Architecture**: Web UI adopts a modular design for maintainability.
+- **Centralized Management**: Reorganized folder structure for easier maintenance.
+- **Modern Themes**: Improved visual design and user experience.
+- **Responsive Layout**: Adapts to different screen sizes and window dimensions.
 
 ### 🖼️ Image Support
 - **Format Support**: PNG, JPG, JPEG, GIF, BMP, WebP
 - **Upload Methods**: Drag & drop files + clipboard paste (Ctrl+V)
 - **Auto Processing**: Smart compression to ensure 1MB limit compliance
 
-### 🌏 Multi-language
-- **Three Languages**: English, Traditional Chinese, Simplified Chinese
-- **Smart Detection**: Auto-select based on system language
-- **Live Switching**: Change language directly within interface
-
-### ✨ WSL Environment Support (v2.2.5 New Feature)
-- **Auto Detection**: Intelligently identifies WSL (Windows Subsystem for Linux) environments
-- **Browser Integration**: Automatically launches Windows browser in WSL environments
-- **Multiple Launch Methods**: Supports `cmd.exe`, `powershell.exe`, `wslview` and other browser launch methods
-- **Seamless Experience**: WSL users can directly use Web UI without additional configuration
+### ✨ WSL Environment Support
+- **Auto Detection**: Intelligently identifies WSL (Windows Subsystem for Linux) environments.
+- **Browser Integration**: Automatically launches Windows browser in WSL environments.
+- **Multiple Launch Methods**: Supports `cmd.exe`, `powershell.exe`, `wslview` and other browser launch methods.
+- **Seamless Experience**: WSL users can directly use Web UI without additional configuration.
 
 ## 🖥️ Interface Preview
 
-### Qt GUI Interface (Refactored Version)
+### Web UI Interface
 <div align="center">
-  <img src="docs/en/images/gui1.png" width="400" alt="Qt GUI Main Interface" />
-  <img src="docs/en/images/gui2.png" width="400" alt="Qt GUI Settings Interface" />
+  <img src="https://raw.githubusercontent.com/Minidoracat/mcp-feedback-enhanced/main/docs/en/images/web1.png" width="400" alt="Web UI Main Interface" />
+  <img src="https://raw.githubusercontent.com/Minidoracat/mcp-feedback-enhanced/main/docs/en/images/web2.png" width="400" alt="Web UI Settings Interface" />
 </div>
 
-*Qt GUI Interface - Modular refactoring, supporting local environments*
-
-### Web UI Interface (Refactored Version)
-<div align="center">
-  <img src="docs/en/images/web1.png" width="400" alt="Web UI Main Interface" />
-  <img src="docs/en/images/web2.png" width="400" alt="Web UI Settings Interface" />
-</div>
-
-*Web UI Interface - Brand new architecture, suitable for SSH Remote environments*
+*Web UI Interface - Modern architecture, suitable for local, SSH Remote, and WSL environments*
 
 **Keyboard Shortcuts**
-- `Ctrl+Enter` (Windows/Linux) / `Cmd+Enter` (macOS): Submit feedback (supports both main keyboard and numpad)
+- `Ctrl+Enter` (Windows/Linux) / `Cmd+Enter` (macOS): Submit feedback
 - `Ctrl+V` (Windows/Linux) / `Cmd+V` (macOS): Directly paste clipboard images
 
 ## 🚀 Quick Start
@@ -105,7 +85,6 @@ uvx mcp-feedback-enhanced@latest test
       "args": ["mcp-feedback-enhanced@latest"],
       "timeout": 600,
       "env": {
-        "FORCE_WEB": "true",
         "MCP_DEBUG": "false"
       },
       "autoApprove": ["interactive_feedback"]
@@ -132,7 +111,6 @@ For best results, add these rules to your AI assistant:
 ### Environment Variables
 | Variable | Purpose | Values | Default |
 |----------|---------|--------|---------|
-| `FORCE_WEB` | Force use Web UI | `true`/`false` | `false` |
 | `MCP_DEBUG` | Debug mode | `true`/`false` | `false` |
 
 ### Testing Options
@@ -140,9 +118,8 @@ For best results, add these rules to your AI assistant:
 # Version check
 uvx mcp-feedback-enhanced@latest version       # Check version
 
-# Interface-specific testing
-uvx mcp-feedback-enhanced@latest test --gui    # Quick test Qt GUI
-uvx mcp-feedback-enhanced@latest test --web    # Test Web UI (auto continuous running)
+# Test Web UI (auto continuous running, this is the default test)
+uvx mcp-feedback-enhanced@latest test
 
 # Debug mode
 MCP_DEBUG=true uvx mcp-feedback-enhanced@latest test
@@ -163,20 +140,16 @@ uv run python -m mcp_feedback_enhanced test
 # Method 2: Complete test suite (macOS and Windows dev environment)
 uvx --with-editable . mcp-feedback-enhanced test
 
-# Method 3: Interface-specific testing
-uvx --with-editable . mcp-feedback-enhanced test --gui    # Quick test Qt GUI
-uvx --with-editable . mcp-feedback-enhanced test --web    # Test Web UI (auto continuous running)
+# Method 3: Test Web UI (default test for editable install)
+uvx --with-editable . mcp-feedback-enhanced test
 ```
 
 **Testing Descriptions**
-- **Standard Test**: Complete functionality check, suitable for daily development verification
-- **Complete Test**: Deep testing of all components, suitable for pre-release verification
-- **Qt GUI Test**: Quick launch and test of local graphical interface
-- **Web UI Test**: Start Web server and keep running for complete Web functionality testing
+- **Standard Test**: Complete functionality check, suitable for daily development verification.
+- **Complete Test**: Deep testing of all components, suitable for pre-release verification.
+- **Web UI Test**: Start Web server and keep running for complete Web functionality testing.
 
 ## 🆕 Version History
-
-📋 **Complete Version History:** [RELEASE_NOTES/CHANGELOG.en.md](RELEASE_NOTES/CHANGELOG.en.md)
 
 ### Latest Version Highlights (v2.2.5)
 - ✨ **WSL Environment Support**: Added comprehensive support for WSL (Windows Subsystem for Linux) environments
@@ -196,7 +169,7 @@ A: Fixed in v2.0.3. Update to latest version: `uvx mcp-feedback-enhanced@latest`
 A: Check file size (≤1MB) and format (PNG/JPG/GIF/BMP/WebP).
 
 **Q: Web UI won't start**
-A: Set `FORCE_WEB=true` or check firewall settings.
+A: Check firewall settings or if the port is already in use.
 
 **Q: UV Cache taking up too much disk space**
 A: Due to frequent use of `uvx` commands, cache may accumulate to tens of GB. Regular cleanup is recommended:
@@ -216,13 +189,9 @@ python scripts/cleanup_cache.py --force
 # Or use uv command directly
 uv cache clean
 ```
-For detailed instructions, see: [Cache Management Guide](docs/en/cache-management.md)
 
 **Q: Gemini Pro 2.5 cannot parse images**
 A: Known issue. Gemini Pro 2.5 may not correctly parse uploaded image content. Testing shows Claude-4-Sonnet can properly analyze images. Recommend using Claude models for better image understanding capabilities.
-
-**Q: Multi-screen window positioning issues**
-A: Fixed in v2.1.1. Go to "⚙️ Settings" tab, check "Always show window at primary screen center" to resolve window positioning issues. Especially useful for T-shaped screen arrangements and other complex multi-monitor configurations.
 
 **Q: Cannot launch browser in WSL environment**
 A: v2.2.5 has added WSL environment support. If issues persist:

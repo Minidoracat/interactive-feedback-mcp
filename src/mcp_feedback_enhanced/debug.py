@@ -55,11 +55,6 @@ def debug_log(message: Any, prefix: str = "DEBUG") -> None:
         pass
 
 
-def gui_debug_log(message: Any) -> None:
-    """GUI 模組專用的調試日誌"""
-    debug_log(message, "GUI")
-
-
 def i18n_debug_log(message: Any) -> None:
     """國際化模組專用的調試日誌"""
     debug_log(message, "I18N")

@@ -35,7 +35,6 @@ from typing import Dict, Any, Optional
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from .debug import debug_log
-from .i18n import t, get_i18n_manager
 
 # 嘗試導入 Web UI 模組
 try:
@@ -43,55 +42,14 @@ try:
     from .web import WebUIManager, launch_web_feedback_ui, get_web_ui_manager
     from .web.utils.browser import smart_browser_open, is_wsl_environment
     WEB_UI_AVAILABLE = True
-    debug_log(t('test.messages.webModuleLoaded'))
+    debug_log("Web UI module loaded successfully.")
 except ImportError as e:
-    debug_log(t('test.messages.webModuleLoadFailed', error=str(e)))
+    debug_log(f"Web UI module load failed: {str(e)}")
     WEB_UI_AVAILABLE = False
 
-def load_web_ui_language_setting():
-    """載入 Web UI 的語言設定並同步到 GUI 國際化系統"""
-    try:
-        # 讀取 ui_settings.json 配置文件
-        config_dir = Path.home() / ".config" / "mcp-feedback-enhanced"
-        settings_file = config_dir / "ui_settings.json"
-
-        if settings_file.exists():
-            with open(settings_file, 'r', encoding='utf-8') as f:
-                settings = json.load(f)
-                language = settings.get('language')
-
-                if language:
-                    debug_log(t('test.messages.loadingLanguageFromSettings', language=language))
-
-                    # 獲取 GUI 國際化管理器並設定語言
-                    i18n_manager = get_i18n_manager()
-                    current_language = i18n_manager.get_current_language()
-
-                    if language != current_language:
-                        debug_log(t('test.messages.syncingLanguage', **{'from': current_language, 'to': language}))
-                        success = i18n_manager.set_language(language)
-                        if success:
-                            debug_log(t('test.messages.guiLanguageSynced', language=language))
-                        else:
-                            debug_log(t('test.messages.languageSetFailed', language=current_language))
-                    else:
-                        debug_log(t('test.messages.languageAlreadySynced', language=language))
-
-                    return language
-                else:
-                    debug_log(t('test.messages.noLanguageInSettings'))
-        else:
-            debug_log(t('test.messages.settingsFileNotExists'))
-
-    except Exception as e:
-        debug_log(t('test.messages.loadLanguageSettingsFailed', error=str(e)))
-
-    # 返回當前語言作為回退
-    return get_i18n_manager().get_current_language()
-
 def get_test_summary():
-    """獲取測試摘要，使用國際化系統"""
-    return t('test.webUiSummary')
+    """獲取測試摘要"""
+    return "Web UI Test Summary"
 
 def find_free_port():
     """Find a free port to use for testing"""
@@ -101,26 +59,23 @@ def find_free_port():
         port = s.getsockname()[1]
     return port
 
-def test_web_ui(keep_running=False):
-    """Test the Web UI functionality"""
-
-    debug_log(t('test.messages.testingWebUi'))
+def test_web_ui(keep_running=False, standalone_run=False):
+    """
+    Test the Web UI functionality.
+    Can be called by pytest (standalone_run=False) or directly (standalone_run=True).
+    """
+    debug_log("Testing Web UI...")
     debug_log("=" * 50)
 
-    # 同步 Web UI 語言設定到 GUI 國際化系統
-    debug_log(t('test.messages.syncingLanguageSettings'))
-    current_language = load_web_ui_language_setting()
-    debug_log(t('test.messages.currentLanguage', language=current_language))
-    debug_log("-" * 30)
-    
     # Test import
     try:
         # 使用新的 web 模組
         from .web import WebUIManager, launch_web_feedback_ui
-        debug_log(t('test.messages.webUiModuleImportSuccess'))
+        debug_log("Web UI module imported successfully for test.")
     except ImportError as e:
-        debug_log(t('test.messages.webUiModuleImportFailed', error=str(e)))
-        return False, None
+        debug_log(f"Web UI module import failed during test: {str(e)}")
+        if standalone_run: return False, None
+        assert False, f"Web UI module import failed during test: {str(e)}"
     
     # Check for environment variable port setting
     env_port = os.getenv("MCP_WEB_PORT")
@@ -128,123 +83,133 @@ def test_web_ui(keep_running=False):
         try:
             custom_port = int(env_port)
             if 1024 <= custom_port <= 65535:
-                debug_log(t('test.messages.foundAvailablePort', port=custom_port))
-                debug_log(f"使用環境變數 MCP_WEB_PORT 指定的端口: {custom_port}")
+                debug_log(f"Found available port from MCP_WEB_PORT: {custom_port}")
                 test_port = custom_port
             else:
-                debug_log(f"MCP_WEB_PORT 值無效 ({custom_port})，必須在 1024-65535 範圍內")
-                # Find free port as fallback
+                debug_log(f"MCP_WEB_PORT value invalid ({custom_port}), must be in 1024-65535 range. Finding free port...")
                 test_port = find_free_port()
-                debug_log(t('test.messages.foundAvailablePort', port=test_port))
+                debug_log(f"Found available port: {test_port}")
         except ValueError:
-            debug_log(f"MCP_WEB_PORT 格式錯誤 ({env_port})，必須為數字")
-            # Find free port as fallback
+            debug_log(f"MCP_WEB_PORT format error ({env_port}), must be a number. Finding free port...")
             test_port = find_free_port()
-            debug_log(t('test.messages.foundAvailablePort', port=test_port))
+            debug_log(f"Found available port: {test_port}")
     else:
         # Find free port
         try:
             test_port = find_free_port()
-            debug_log(t('test.messages.foundAvailablePort', port=test_port))
+            debug_log(f"Found available port: {test_port}")
         except Exception as e:
-            debug_log(t('test.messages.findPortFailed', error=str(e)))
-            return False, None
+            debug_log(f"Failed to find free port: {str(e)}")
+            if standalone_run: return False, None
+            assert False, f"Failed to find free port: {str(e)}"
 
-    # Test manager creation (不傳遞 port 參數，讓 WebUIManager 自己處理環境變數)
+    # Test manager creation (讓 WebUIManager 自己處理端口邏輯)
     try:
-        manager = WebUIManager()  # 讓 WebUIManager 自己處理端口邏輯
-        debug_log(t('test.messages.webUiManagerCreateSuccess'))
+        manager = WebUIManager()
+        debug_log("Web UI Manager created successfully.")
     except Exception as e:
-        debug_log(t('test.messages.webUiManagerCreateFailed', error=str(e)))
-        return False, None
+        debug_log(f"Web UI Manager creation failed: {str(e)}")
+        if standalone_run: return False, None
+        assert False, f"Web UI Manager creation failed: {str(e)}"
     
     # Test server start (with timeout)
     server_started = False
     try:
-        debug_log(t('test.messages.startingWebServer'))
+        debug_log("Starting Web server...")
 
-        def start_server():
+        server_start_success_in_thread = [False] # Use a list to pass by reference
+
+        def start_server_thread_target():
             try:
                 manager.start_server()
-                return True
+                server_start_success_in_thread[0] = True
             except Exception as e:
-                debug_log(t('test.messages.serverStartError', error=str(e)))
-                return False
+                debug_log(f"Server start error in thread: {str(e)}")
+                server_start_success_in_thread[0] = False
         
         # Start server in thread
-        server_thread = threading.Thread(target=start_server)
+        server_thread = threading.Thread(target=start_server_thread_target)
         server_thread.daemon = True
         server_thread.start()
         
         # Wait a moment and test if server is responsive
-        time.sleep(3)
+        time.sleep(3) # Give server time to start
         
+        assert server_start_success_in_thread[0], "Server failed to start within the thread."
+
         # Test if port is listening
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(1)
-            result = s.connect_ex((manager.host, manager.port))
-            if result == 0:
-                server_started = True
-                debug_log(t('test.messages.webServerStartSuccess'))
-                debug_log(t('test.messages.serverRunningAt', host=manager.host, port=manager.port))
-            else:
-                debug_log(t('test.messages.cannotConnectToPort', port=manager.port))
+            connect_result = s.connect_ex((manager.host, manager.port))
+            assert connect_result == 0, f"Cannot connect to port {manager.port} after server start."
+            server_started = True
+            debug_log("Web server started successfully and port is listening.")
+            debug_log(f"Server running at: {manager.host}:{manager.port}")
 
     except Exception as e:
-        debug_log(t('test.messages.webServerStartFailed', error=str(e)))
-        return False, None
+        debug_log(f"Web server start failed: {str(e)}")
+        if standalone_run: return False, None
+        assert False, f"Web server start failed: {str(e)}"
 
-    if not server_started:
-        debug_log(t('test.messages.serverNotStarted'))
-        return False, None
+    if standalone_run and not server_started : return False, None # Extra check for standalone
+    assert server_started, "Server not started, aborting tests."
     
     # Test session creation
     session_info = None
     try:
         project_dir = str(Path.cwd())
-        # 使用國際化系統獲取測試摘要
-        summary = t('test.webUiSummary')
+        summary = get_test_summary() # Use the simplified function
         session_id = manager.create_session(project_dir, summary)
         session_info = {
             'manager': manager,
             'session_id': session_id,
-            'url': f"http://{manager.host}:{manager.port}"  # 使用根路徑
+            'url': f"http://{manager.host}:{manager.port}"
         }
-        debug_log(t('test.messages.testSessionCreated', sessionId=session_id[:8]))
-        debug_log(t('test.messages.testUrl', url=session_info['url']))
+        assert session_id is not None, "Session ID should be created."
+        debug_log(f"Test session created: {session_id[:8]}")
+        debug_log(f"Test URL: {session_info['url']}")
 
         # 測試瀏覽器啟動功能
         try:
-            debug_log(t('test.messages.testingBrowserLaunch'))
+            debug_log("Testing browser launch...")
             if is_wsl_environment():
-                debug_log(t('test.messages.wslEnvironmentDetected'))
+                debug_log("WSL environment detected.")
             else:
-                debug_log(t('test.messages.nonWslEnvironment'))
+                debug_log("Non-WSL environment.")
 
-            smart_browser_open(session_info['url'])
-            debug_log(t('test.messages.browserLaunchSuccess', url=session_info['url']))
+            # smart_browser_open(session_info['url']) # This might open a real browser, skip for automated tests
+            debug_log(f"Browser launch attempt logged for URL: {session_info['url']} (actual launch skipped in auto test)")
         except Exception as browser_error:
-            debug_log(t('test.messages.browserLaunchFailed', error=str(browser_error)))
-            debug_log(t('test.messages.browserLaunchNote'))
+            debug_log(f"Browser launch logic failed: {str(browser_error)}")
+            # Not failing the test for this, as it's environment dependent
+            debug_log("Note: Browser launch might require specific desktop environment setup.")
 
     except Exception as e:
-        debug_log(t('test.messages.sessionCreationFailed', error=str(e)))
-        return False, None
+        debug_log(f"Session creation failed: {str(e)}")
+        if standalone_run: return False, None
+        assert False, f"Session creation failed: {str(e)}"
     
+    if standalone_run and not session_info: return False, None # Extra check for standalone
+    assert session_info is not None, "session_info should be populated."
     debug_log("\n" + "=" * 50)
-    debug_log(t('test.messages.allTestsPassed'))
-    debug_log(t('test.messages.notes'))
-    debug_log(t('test.messages.webUiAutoEnabled'))
-    debug_log(t('test.messages.localEnvironmentGui'))
-    debug_log(t('test.messages.realtimeCommandSupport'))
-    debug_log(t('test.messages.modernDarkTheme'))
-    debug_log(t('test.messages.smartCtrlVPaste'))
+    debug_log("All Web UI basic tests passed.")
+    debug_log("Notes:")
+    debug_log("- Web UI is automatically enabled for remote/WSL or if GUI is unavailable.")
+    debug_log("- Realtime command execution is supported.")
+    debug_log("- Modern dark theme is applied.")
+    debug_log("- Smart Ctrl+V paste for images is available.")
     
-    return True, session_info
+    # To satisfy pytest, a test function should not return a value unless it's part of a specific pytest pattern (like fixtures)
+    # The important part is that assertions pass. If keep_running is True (only from direct script run), this test might hang.
+    if standalone_run:
+        if keep_running: # keep_running is a legacy param, usually for __main__ context
+            interactive_demo(session_info)
+        return True, session_info
+    # For pytest, no explicit return is needed for success if all assertions pass
 
 def test_environment_detection():
     """Test environment detection logic"""
-    debug_log(t('test.messages.testingEnvironmentDetection'))
+    debug_log("Testing environment detection...")
     debug_log("-" * 30)
 
     try:
@@ -252,154 +217,141 @@ def test_environment_detection():
 
         wsl_detected = is_wsl_environment()
         remote_detected = is_remote_environment()
-        gui_available = can_use_gui()
+        gui_available = can_use_gui() # This will now likely be False
 
-        debug_log(t('test.messages.wslDetection', result=t('test.messages.yes') if wsl_detected else t('test.messages.no')))
-        debug_log(t('test.messages.remoteDetection', result=t('test.messages.yes') if remote_detected else t('test.messages.no')))
-        debug_log(t('test.messages.guiAvailability', result=t('test.messages.yes') if gui_available else t('test.messages.no')))
+        debug_log(f"WSL Detection: {'Yes' if wsl_detected else 'No'}")
+        debug_log(f"Remote Detection: {'Yes' if remote_detected else 'No'}")
+        debug_log(f"GUI Availability: {'Yes' if gui_available else 'No'}") # Expected False
 
         if wsl_detected:
-            debug_log(t('test.messages.wslEnvironmentWebUi'))
+            debug_log("Info: WSL environment, Web UI will be used with Windows browser.")
         elif remote_detected:
-            debug_log(t('test.messages.remoteEnvironmentWebUi'))
+            debug_log("Info: Remote environment, Web UI will be used.")
+        elif not gui_available:
+            debug_log("Info: Local environment but GUI unavailable, Web UI will be used.")
         else:
-            debug_log(t('test.messages.localEnvironmentQtGui'))
+            # This case should ideally not happen after GUI removal if can_use_gui is accurate
+            debug_log("Info: Local environment with GUI available (unexpected after changes).")
 
-        return True
+        assert True # If no exception, the checks ran
 
     except Exception as e:
-        debug_log(t('test.messages.environmentDetectionFailed', error=str(e)))
-        return False
+        debug_log(f"Environment detection test failed: {str(e)}")
+        assert False, f"Environment detection test failed: {str(e)}"
 
 def test_mcp_integration():
     """Test MCP server integration"""
-    debug_log(t('test.messages.testingMcpIntegration'))
+    debug_log("Testing MCP integration...")
     debug_log("-" * 30)
 
     try:
         from .server import interactive_feedback
-        debug_log(t('test.messages.mcpToolFunctionAvailable'))
+        assert interactive_feedback is not None, "interactive_feedback tool should be importable"
+        debug_log("MCP tool 'interactive_feedback' is available.")
 
         # Test timeout parameter
-        debug_log(t('test.messages.timeoutParameterSupported'))
+        debug_log("Timeout parameter is supported by the tool.")
 
         # Test environment-based Web UI selection
-        debug_log(t('test.messages.environmentBasedWebUiSupported'))
+        debug_log("Environment-based Web UI selection is handled by the tool.")
 
-        # Test would require actual MCP call, so just verify import
-        debug_log(t('test.messages.readyForAiAssistantCalls'))
-        return True
-
+        debug_log("MCP tool is ready for AI assistant calls.")
+        assert True
     except Exception as e:
-        debug_log(t('test.messages.mcpIntegrationTestFailed', error=str(e)))
-        return False
+        debug_log(f"MCP integration test failed: {str(e)}")
+        assert False, f"MCP integration test failed: {str(e)}"
 
 def test_new_parameters():
     """Test timeout parameter and environment variable support"""
-    debug_log(t('test.messages.testingParameterFunctionality'))
+    debug_log("Testing parameter functionality...")
     debug_log("-" * 30)
 
     try:
         from .server import interactive_feedback
-
-        # 測試參數是否存在
         import inspect
         sig = inspect.signature(interactive_feedback)
 
-        # 檢查 timeout 參數
-        if 'timeout' in sig.parameters:
-            timeout_param = sig.parameters['timeout']
-            debug_log(t('test.messages.timeoutParameterExists', default=timeout_param.default))
-        else:
-            debug_log(t('test.messages.timeoutParameterMissing'))
-            return False
+        assert 'timeout' in sig.parameters, "Timeout parameter should exist."
+        timeout_param = sig.parameters['timeout']
+        debug_log(f"Timeout parameter exists with default: {timeout_param.default}")
 
-        # 檢查環境變數支援
         import os
-        current_force_web = os.getenv("FORCE_WEB")
-        if current_force_web:
-            debug_log(t('test.messages.forceWebDetected', value=current_force_web))
-        else:
-            debug_log(t('test.messages.forceWebNotSet'))
-
-        debug_log(t('test.messages.parameterFunctionalityNormal'))
-        return True
-
+        # FORCE_WEB check removed as it's no longer used by the application
+        debug_log("Parameter functionality appears normal (FORCE_WEB check removed).")
+        assert True
     except Exception as e:
-        debug_log(t('test.messages.parameterTestFailed', error=str(e)))
-        return False
+        debug_log(f"Parameter test failed: {str(e)}")
+        assert False, f"Parameter test failed: {str(e)}"
 
 def test_environment_web_ui_mode():
     """Test environment-based Web UI mode"""
-    debug_log(t('test.messages.testingEnvironmentWebUiMode'))
+    debug_log("Testing environment-based Web UI mode...")
     debug_log("-" * 30)
 
     try:
-        from .server import interactive_feedback, is_remote_environment, is_wsl_environment, can_use_gui
+        from .server import is_remote_environment, is_wsl_environment, can_use_gui # Removed interactive_feedback import as it's not used here
         import os
 
-        # 顯示當前環境狀態
         is_wsl = is_wsl_environment()
         is_remote = is_remote_environment()
-        gui_available = can_use_gui()
-        force_web_env = os.getenv("FORCE_WEB", "").lower()
+        gui_available = can_use_gui() # Expected False
 
-        debug_log(t('test.messages.currentEnvironment', wsl=is_wsl, remote=is_remote, gui=gui_available))
-        debug_log(t('test.messages.forceWebVariable', value=force_web_env or t('test.messages.notSet')))
+        debug_log(f"Current environment: WSL={is_wsl}, Remote={is_remote}, GUI available={gui_available}")
+        # FORCE_WEB logic removed as Web UI is always used.
 
-        if force_web_env in ("true", "1", "yes", "on"):
-            debug_log(t('test.messages.forceWebEnabled'))
-        elif is_wsl:
-            debug_log(t('test.messages.wslEnvironmentWebUiBrowser'))
-        elif not is_remote and gui_available:
-            debug_log(t('test.messages.localGuiEnvironmentQtGui'))
-            debug_log(t('test.messages.forceWebTestHint'))
+        if is_wsl:
+            debug_log("WSL environment detected, Web UI with Windows browser will be used.")
+        elif is_remote: # This condition implies not WSL
+            debug_log("Remote environment detected, Web UI will be used.")
+        elif not gui_available: # This will always be true now if not remote and not WSL
+            debug_log("Local environment and GUI not available, Web UI will be used.")
         else:
-            debug_log(t('test.messages.autoWebUiRemoteOrNoGui'))
+            # This case should ideally not be reached if can_use_gui() is correctly always False
+            # and is_remote_environment correctly identifies all non-local-desktop scenarios.
+            debug_log("Local environment and GUI reported as available (this is unexpected). Web UI should still be used by default.")
 
-        return True
-
+        assert True
     except Exception as e:
-        debug_log(t('test.messages.environmentVariableTestFailed', error=str(e)))
-        return False
+        debug_log(f"Environment variable test failed: {str(e)}")
+        assert False, f"Environment variable test failed: {str(e)}"
 
 def interactive_demo(session_info):
     """Run interactive demo with the Web UI"""
-    debug_log(t('test.messages.webUiInteractiveTestMode'))
+    debug_log("Web UI Interactive Test Mode")
     debug_log("=" * 50)
-    debug_log(t('test.messages.serverAddress', url=session_info['url']))  # 簡化輸出，只顯示服務器地址
-    debug_log(t('test.messages.operationGuide'))
-    debug_log(t('test.messages.openServerInBrowser'))
-    debug_log(t('test.messages.tryFollowingFeatures'))
-    debug_log(t('test.messages.clickShowCommandBlock'))
-    debug_log(t('test.messages.inputCommandAndExecute'))
-    debug_log(t('test.messages.inputTextInFeedbackArea'))
-    debug_log(t('test.messages.useCtrlEnterSubmit'))
-    debug_log(t('test.messages.testWebSocketRealtime'))
-    debug_log(t('test.messages.testPagePersistence'))
-    debug_log(t('test.messages.controlOptions'))
-    debug_log(t('test.messages.pressEnterContinue'))
-    debug_log(t('test.messages.inputQuitToStop'))
+    debug_log(f"Server Address: {session_info['url']}")
+    debug_log("Operation Guide:")
+    debug_log("- Open the server address in your browser.")
+    debug_log("- Try the following features:")
+    debug_log("  - Click 'Show Command Block' / 'Hide Command Block'.")
+    debug_log("  - Input commands and execute (e.g., 'ls', 'pwd').")
+    debug_log("  - Input text in the feedback area.")
+    debug_log("  - Use Ctrl+Enter to submit feedback.")
+    debug_log("  - Test WebSocket realtime updates by interacting with the UI.")
+    debug_log("  - Test page persistence by reloading or opening in new tab (if session active).")
+    debug_log("Control Options:")
+    debug_log("- Press Enter to continue server (it will keep running).")
+    debug_log("- Type 'q', 'quit', or 'exit' and press Enter to stop the server.")
     
     while True:
         try:
             user_input = input("\n>>> ").strip().lower()
             if user_input in ['q', 'quit', 'exit']:
-                debug_log(t('test.messages.stoppingServer'))
+                debug_log("Stopping server as per user request...")
                 break
             elif user_input == '':
-                debug_log(t('test.messages.serverContinuesRunning', url=session_info['url']))
-                debug_log(t('test.messages.browserShouldStillAccess'))
+                debug_log(f"Server continues running at {session_info['url']}")
+                debug_log("Browser should still be ableto access the UI.")
             else:
-                debug_log(t('test.messages.unknownCommand'))
+                debug_log("Unknown command. Press Enter to keep server running, or 'q' to quit.")
         except KeyboardInterrupt:
-            debug_log(t('test.messages.interruptSignalReceived'))
+            debug_log("\nInterrupt signal received. Stopping server...")
             break
 
-    debug_log(t('test.messages.webUiTestComplete'))
+    debug_log("Web UI interactive test complete.")
 
 if __name__ == "__main__":
-    debug_log(t('test.messages.webUiTest'))
+    debug_log("MCP Feedback Enhanced - Web UI Test Suite")
     debug_log("=" * 60)
     
     # Test environment detection
@@ -419,25 +371,25 @@ if __name__ == "__main__":
     
     debug_log("\n" + "=" * 60)
     if env_test and params_test and env_web_test and mcp_test and web_test:
-        debug_log(t('test.messages.allTestsComplete'))
-        debug_log(t('test.messages.usageInstructions'))
-        debug_log(t('test.messages.configureMcpServer'))
-        debug_log(t('test.messages.aiAssistantAutoCall'))
-        debug_log(t('test.messages.autoSelectGuiOrWebUi'))
-        debug_log(t('test.messages.provideFeedbackContinue'))
+        debug_log("All primary tests completed successfully!")
+        debug_log("Usage Instructions:")
+        debug_log("- Configure this tool as an MCP server in your AI assistant.")
+        debug_log("- The AI assistant will automatically call this tool for feedback.")
+        debug_log("- The system will automatically use the Web UI.")
+        debug_log("- Provide feedback through the UI to continue the AI workflow.")
 
-        debug_log(t('test.messages.webUiNewFeatures'))
-        debug_log(t('test.messages.sshRemoteSupport'))
-        debug_log(t('test.messages.modernDarkThemeInterface'))
-        debug_log(t('test.messages.webSocketRealtime'))
-        debug_log(t('test.messages.autoBrowserLaunch'))
-        debug_log(t('test.messages.commandExecutionRealtime'))
+        debug_log("Web UI Features:")
+        debug_log("- Suitable for local, SSH remote, and WSL environments.")
+        debug_log("- Modern dark theme interface.")
+        debug_log("- Realtime updates via WebSockets.")
+        debug_log("- Automatic browser launch (where possible).")
+        debug_log("- Realtime command execution output.")
 
-        debug_log(t('test.messages.testCompleteSystemReady'))
+        debug_log("Test complete. System is ready for use.")
         if session_info:
-            debug_log(t('test.messages.canTestInBrowserNow', url=session_info['url']))
-            debug_log(t('test.messages.serverWillContinueRunning'))
-            time.sleep(10)  # Keep running for a short time for immediate testing
+            debug_log(f"You can test the Web UI in your browser now: {session_info['url']}")
+            debug_log("The server will continue running for a short period for immediate testing.")
+            time.sleep(10)
     else:
-        debug_log(t('test.messages.someTestsFailed'))
+        debug_log("Some tests failed. Please review the logs.")
         sys.exit(1)

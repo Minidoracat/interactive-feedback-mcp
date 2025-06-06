@@ -73,38 +73,8 @@ def setup_routes(manager: 'WebUIManager'):
             "title": "Interactive Feedback - 回饋收集",
             "version": __version__,
             "has_session": True,
-            "layout_mode": layout_mode,
-            "i18n": manager.i18n
+            "layout_mode": layout_mode
         })
-
-    @manager.app.get("/api/translations")
-    async def get_translations():
-        """獲取翻譯數據 - 從 Web 專用翻譯檔案載入"""
-        translations = {}
-        
-        # 獲取 Web 翻譯檔案目錄
-        web_locales_dir = Path(__file__).parent.parent / "locales"
-        supported_languages = ["zh-TW", "zh-CN", "en"]
-        
-        for lang_code in supported_languages:
-            lang_dir = web_locales_dir / lang_code
-            translation_file = lang_dir / "translation.json"
-            
-            try:
-                if translation_file.exists():
-                    with open(translation_file, 'r', encoding='utf-8') as f:
-                        lang_data = json.load(f)
-                        translations[lang_code] = lang_data
-                        debug_log(f"成功載入 Web 翻譯: {lang_code}")
-                else:
-                    debug_log(f"Web 翻譯檔案不存在: {translation_file}")
-                    translations[lang_code] = {}
-            except Exception as e:
-                debug_log(f"載入 Web 翻譯檔案失敗 {lang_code}: {e}")
-                translations[lang_code] = {}
-        
-        debug_log(f"Web 翻譯 API 返回 {len(translations)} 種語言的數據")
-        return JSONResponse(content=translations)
 
     @manager.app.get("/api/session-status")
     async def get_session_status():

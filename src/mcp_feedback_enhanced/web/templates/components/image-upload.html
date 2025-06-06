@@ -15,53 +15,53 @@
 #}
 
 {% set id_prefix = id_prefix or "default" %}
-{% set label_text = label_text or "圖片附件（可選）" %}
+{% set label_text = label_text or "Image Attachments (Optional)" %}
 {% set min_height = min_height or "120px" %}
-{% set upload_text = upload_text or "📎 點擊選擇圖片或拖放圖片到此處<br><small>支援 PNG、JPG、JPEG、GIF、BMP、WebP 等格式</small>" %}
+{% set upload_text = upload_text or "📎 Click to select images or drag & drop here<br><small>Supports PNG, JPG, JPEG, GIF, BMP, WebP, etc.</small>" %}
 
 <!-- 圖片設定區域 -->
 <div class="input-group" style="margin-bottom: 12px;">
     <details class="image-settings-details">
-        <summary class="image-settings-summary" data-i18n="images.settings.title">⚙️ 圖片設定</summary>
+        <summary class="image-settings-summary">⚙️ Image Settings</summary>
         <div class="image-settings-content">
             <div class="image-setting-row">
-                <label class="image-setting-label" data-i18n="images.settings.sizeLimit">圖片大小限制：</label>
+                <label class="image-setting-label">Image Size Limit:</label>
                 <select id="{{ id_prefix }}ImageSizeLimit" class="image-setting-select">
-                    <option value="0" data-i18n="images.settings.sizeLimitOptions.unlimited">無限制</option>
-                    <option value="1048576" data-i18n="images.settings.sizeLimitOptions.1mb">1MB</option>
-                    <option value="3145728" data-i18n="images.settings.sizeLimitOptions.3mb">3MB</option>
-                    <option value="5242880" data-i18n="images.settings.sizeLimitOptions.5mb">5MB</option>
+                    <option value="0">Unlimited</option>
+                    <option value="1048576" selected>1MB</option> {# Default selected 1MB based on previous grep #}
+                    <option value="3145728">3MB</option>
+                    <option value="5242880">5MB</option>
                 </select>
             </div>
             <div class="image-setting-row">
                 <label class="image-setting-checkbox-container">
                     <input type="checkbox" id="{{ id_prefix }}EnableBase64Detail" class="image-setting-checkbox">
                     <span class="image-setting-checkmark"></span>
-                    <span class="image-setting-label" data-i18n="images.settings.base64Detail">Base64 相容模式</span>
+                    <span class="image-setting-label">Base64 Compatibility Mode</span>
                 </label>
-                <small class="image-setting-help" data-i18n="images.settings.base64Warning">⚠️ 會增加傳輸量</small>
+                <small class="image-setting-help">⚠️ Increases payload size</small>
             </div>
-            <div class="image-setting-help-text" data-i18n="images.settings.base64DetailHelp">
-                啟用後會在文字中包含完整的 Base64 圖片資料，提升部分 AI 模型的相容性
+            <div class="image-setting-help-text">
+                When enabled, includes full Base64 image data in text, improving compatibility for some AI models.
             </div>
         </div>
     </details>
 </div>
 
 <div class="input-group">
-    <label class="input-label" data-i18n="feedback.imageLabel">{{ label_text }}</label>
+    <label class="input-label">{{ label_text }}</label>
     
     <!-- 相容性提示區域 -->
     <div id="{{ id_prefix }}CompatibilityHint" class="compatibility-hint" style="display: none;">
-        <span data-i18n="images.settings.compatibilityHint">💡 圖片無法正確識別？</span>
-        <button type="button" id="{{ id_prefix }}EnableBase64Hint" class="compatibility-hint-btn" data-i18n="images.settings.enableBase64Hint">
-            嘗試啟用 Base64 相容模式
+        <span>💡 Images not recognized correctly?</span>
+        <button type="button" id="{{ id_prefix }}EnableBase64Hint" class="compatibility-hint-btn">
+            Try Enabling Base64 Compatibility Mode
         </button>
     </div>
     
     <!-- 圖片上傳區域 -->
     <div id="{{ id_prefix }}ImageUploadArea" class="image-upload-area" style="min-height: {{ min_height }};">
-        <div id="{{ id_prefix }}ImageUploadText" data-i18n="feedback.imageUploadText">
+        <div id="{{ id_prefix }}ImageUploadText">
             {{ upload_text|safe }}
         </div>
         <div id="{{ id_prefix }}ImagePreviewContainer" class="image-preview-container"></div>

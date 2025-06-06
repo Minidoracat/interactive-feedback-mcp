@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW" id="html-root">
+<html lang="en" id="html-root">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -377,15 +377,15 @@
         <header class="header">
             <div class="header-content">
                 <div class="header-left">
-                    <h1 class="title" data-i18n="app.title">MCP Feedback Enhanced</h1>
+                    <h1 class="title">MCP Feedback Enhanced</h1>
                     <!-- 倒數計時器顯示 -->
                     <div id="countdownDisplay" class="countdown-display" style="display: none;">
-                        <span class="countdown-label" data-i18n="timeout.remaining">剩餘時間</span>
+                        <span class="countdown-label">Time Remaining</span>
                         <span id="countdownTimer" class="countdown-timer">--:--</span>
                     </div>
                 </div>
                 <div class="project-info">
-                    <span data-i18n="app.projectDirectory">專案目錄</span>: {{ project_directory }}
+                    <span>Project Directory</span>: {{ project_directory }}
                 </div>
             </div>
         </header>
@@ -396,23 +396,23 @@
             <div class="tabs">
                 <div class="tab-buttons">
                     <!-- 合併模式分頁 - 移到最左邊第一個 -->
-                    <button class="tab-button hidden" data-tab="combined" data-i18n="tabs.combined">
-                        📝 合併模式
+                    <button class="tab-button hidden" data-tab="combined">
+                        📝 Combined Mode
                     </button>
-                    <button class="tab-button active" data-tab="feedback" data-i18n="tabs.feedback">
-                        💬 回饋
+                    <button class="tab-button active" data-tab="feedback">
+                        💬 Feedback
                     </button>
-                    <button class="tab-button" data-tab="summary" data-i18n="tabs.summary">
-                        📋 AI 摘要
+                    <button class="tab-button" data-tab="summary">
+                        📋 AI Summary
                     </button>
-                    <button class="tab-button" data-tab="command" data-i18n="tabs.command">
-                        ⚡ 命令
+                    <button class="tab-button" data-tab="command">
+                        ⚡ Command
                     </button>
-                    <button class="tab-button" data-tab="settings" data-i18n="tabs.settings">
-                        ⚙️ 設定
+                    <button class="tab-button" data-tab="settings">
+                        ⚙️ Settings
                     </button>
-                    <button class="tab-button" data-tab="about" data-i18n="tabs.about">
-                        ℹ️ 關於
+                    <button class="tab-button" data-tab="about">
+                        ℹ️ About
                     </button>
                 </div>
             </div>
@@ -421,29 +421,28 @@
 
             <!-- ===== 回饋分頁 ===== -->
             <div id="tab-feedback" class="tab-content active">
-                <div class="section-description" data-i18n="feedback.description">
-                    請提供您對 AI 工作成果的回饋意見。您可以輸入文字回饋並上傳相關圖片。
+                <div class="section-description">
+                    Please provide your feedback on the AI's work. You can enter text feedback and upload relevant images.
                 </div>
 
                 <!-- 等待回饋狀態指示器 -->
                 {% set id = "feedbackStatusIndicator" %}
                 {% set status = "waiting" %}
                 {% set icon = "⏳" %}
-                {% set title = "等待回饋" %}
-                {% set message = "請提供您的回饋意見" %}
+                {% set title = "Waiting for Feedback" %}
+                {% set message = "Please provide your feedback." %}
                 {% include 'components/status-indicator.html' %}
 
                 <div class="input-group">
-                    <label class="input-label" data-i18n="feedback.textLabel">文字回饋</label>
+                    <label class="input-label">Text Feedback</label>
                     <textarea 
                         id="feedbackText" 
                         class="text-input" 
-                        data-i18n-placeholder="feedback.detailedPlaceholder"
-                        placeholder="請在這裡輸入您的回饋...
+                        placeholder="Enter your feedback here...
 
-💡 小提示：
-• 按 Ctrl+Enter/Cmd+Enter (支援數字鍵盤) 可快速提交
-• 按 Ctrl+V/Cmd+V 可直接貼上剪貼板圖片"
+💡 Tips:
+• Press Ctrl+Enter/Cmd+Enter (numpad supported) to submit quickly
+• Press Ctrl+V/Cmd+V to paste images from clipboard"
                     ></textarea>
                 </div>
 
@@ -454,8 +453,8 @@
 
             <!-- ===== AI 摘要分頁 ===== -->
             <div id="tab-summary" class="tab-content">
-                <div class="section-description" data-i18n="summary.description">
-                    以下是 AI 助手完成的工作摘要，請仔細查看並提供您的回饋意見。
+                <div class="section-description">
+                    Below is the summary of the work done by the AI assistant. Please review it carefully and provide your feedback.
                 </div>
                 
                 <div class="input-group">
@@ -467,19 +466,19 @@
 
             <!-- 命令分頁 -->
             <div id="tab-command" class="tab-content">
-                <div class="section-description" data-i18n="command.description">
-                    在此執行命令來驗證結果或收集更多資訊。命令將在專案目錄中執行。
+                <div class="section-description">
+                    Execute commands here to verify results or gather more information. Commands will run in the project directory.
                 </div>
                 
                 <!-- 命令輸出區域 - 放在上面 -->
                 <div class="input-group">
-                    <label class="input-label" data-i18n="command.outputLabel">命令輸出</label>
+                    <label class="input-label">Command Output</label>
                     <div id="commandOutput" class="command-output"></div>
                 </div>
 
                 <!-- 命令輸入區域 - 放在下面 -->
                 <div class="input-group" style="margin-bottom: 0;">
-                    <label class="input-label" data-i18n="command.inputLabel">命令輸入</label>
+                    <label class="input-label">Command Input</label>
                     <div style="display: flex; gap: 10px; align-items: flex-start;">
                         <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
                             <span style="color: var(--accent-color); font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-weight: bold;">$</span>
@@ -487,13 +486,12 @@
                                 type="text"
                                 id="commandInput" 
                                 class="command-input-line" 
-                                data-i18n-placeholder="command.placeholder"
-                                placeholder="輸入要執行的命令..."
+                                placeholder="Enter command to execute..."
                                 style="flex: 1; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 12px; color: var(--text-primary); font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 14px;"
                             />
                         </div>
-                        <button id="runCommandBtn" class="btn btn-primary" data-i18n="command.runButton" style="white-space: nowrap;">
-                            ▶️ 執行
+                        <button id="runCommandBtn" class="btn btn-primary" style="white-space: nowrap;">
+                            ▶️ Run
                         </button>
                     </div>
                 </div>
@@ -501,14 +499,14 @@
 
             <!-- 合併模式分頁 - 移動到此位置 -->
             <div id="tab-combined" class="tab-content">
-                <div class="section-description" style="margin-bottom: 12px; padding: 8px 12px; font-size: 13px;" data-i18n="combined.description">
-                    合併模式：AI 摘要和回饋輸入在同一頁面中，方便對照查看。
+                <div class="section-description" style="margin-bottom: 12px; padding: 8px 12px; font-size: 13px;">
+                    Combined Mode: AI summary and feedback input on the same page for easy comparison.
                 </div>
                 
                 <div class="combined-content">
                     <!-- AI 摘要區域 -->
                     <div class="combined-section">
-                        <h3 class="combined-section-title" data-i18n="combined.summaryTitle">📋 AI 工作摘要</h3>
+                        <h3 class="combined-section-title">📋 AI Summary</h3>
                         <div class="combined-summary">
                             <div id="combinedSummaryContent" class="text-input" style="min-height: 200px; white-space: pre-wrap !important; cursor: text; padding: 12px; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word;" data-dynamic-content="aiSummary">{{ summary }}</div>
                         </div>
@@ -516,27 +514,26 @@
 
                     <!-- 回饋輸入區域 -->
                     <div class="combined-section">
-                        <h3 class="combined-section-title" data-i18n="combined.feedbackTitle">💬 提供回饋</h3>
+                        <h3 class="combined-section-title">💬 Provide Feedback</h3>
 
                         <!-- 等待回饋狀態指示器 -->
                         {% set id = "combinedFeedbackStatusIndicator" %}
                         {% set status = "waiting" %}
                         {% set icon = "⏳" %}
-                        {% set title = "等待回饋" %}
-                        {% set message = "請提供您的回饋意見" %}
+                        {% set title = "Waiting for Feedback" %}
+                        {% set message = "Please provide your feedback." %}
                         {% include 'components/status-indicator.html' %}
 
                         <div class="input-group">
-                            <label class="input-label" data-i18n="feedback.textLabel">文字回饋</label>
+                            <label class="input-label">Text Feedback</label>
                             <textarea
                                 id="combinedFeedbackText"
                                 class="text-input"
-                                data-i18n-placeholder="feedback.detailedPlaceholder"
-                                placeholder="請在這裡輸入您的回饋...
+                                placeholder="Enter your feedback here...
 
-💡 小提示：
-• 按 Ctrl+Enter/Cmd+Enter (支援數字鍵盤) 可快速提交
-• 按 Ctrl+V/Cmd+V 可直接貼上剪貼板圖片"
+💡 Tips:
+• Press Ctrl+Enter/Cmd+Enter (numpad supported) to submit quickly
+• Press Ctrl+V/Cmd+V to paste images from clipboard"
                                 style="min-height: 150px;"
                             ></textarea>
                         </div>
@@ -551,101 +548,66 @@
 
             <!-- 設定分頁 -->
             <div id="tab-settings" class="tab-content">
-                <div class="section-description" data-i18n="settings.description">
-                    調整介面設定和偏好選項。
+                <div class="section-description">
+                    Adjust interface settings and preferences.
                 </div>
 
                 <!-- 介面設定卡片 -->
                 <div class="settings-card">
                     <div class="settings-card-header">
-                        <h3 class="settings-card-title" data-i18n="settings.interface">🎨 介面設定</h3>
+                        <h3 class="settings-card-title">🎨 Interface Settings</h3>
                     </div>
                     <div class="settings-card-body">
                         <div class="setting-item">
                             <div class="setting-info">
-                                <div class="setting-label" data-i18n="settings.layoutMode">界面佈局模式</div>
-                                <div class="setting-description" data-i18n="settings.layoutModeDesc">
-                                    選擇 AI 摘要和回饋輸入的顯示方式
+                                <div class="setting-label">Layout Mode</div>
+                                <div class="setting-description">
+                                    Choose how AI summary and feedback input are displayed.
                                 </div>
                             </div>
                             <div class="layout-mode-selector">
                                 <div class="layout-option">
                                     <input type="radio" id="separateMode" name="layoutMode" value="separate" checked>
                                     <label for="separateMode">
-                                        <div class="layout-option-title" data-i18n="settings.separateMode">分離模式</div>
-                                        <div class="layout-option-desc" data-i18n="settings.separateModeDesc">AI 摘要和回饋分別在不同頁籤</div>
+                                        <div class="layout-option-title">Separate Mode</div>
+                                        <div class="layout-option-desc">AI summary and feedback in different tabs.</div>
                                     </label>
                                 </div>
                                 <div class="layout-option">
                                     <input type="radio" id="combinedVertical" name="layoutMode" value="combined-vertical">
                                     <label for="combinedVertical">
-                                        <div class="layout-option-title" data-i18n="settings.combinedVertical">合併模式（垂直布局）</div>
-                                        <div class="layout-option-desc" data-i18n="settings.combinedVerticalDesc">AI 摘要在上，回饋輸入在下，摘要和回饋在同一頁面</div>
+                                        <div class="layout-option-title">Combined Mode (Vertical)</div>
+                                        <div class="layout-option-desc">AI summary above, feedback input below, on the same page.</div>
                                     </label>
                                 </div>
                                 <div class="layout-option">
                                     <input type="radio" id="combinedHorizontal" name="layoutMode" value="combined-horizontal">
                                     <label for="combinedHorizontal">
-                                        <div class="layout-option-title" data-i18n="settings.combinedHorizontal">合併模式（水平布局）</div>
-                                        <div class="layout-option-desc" data-i18n="settings.combinedHorizontalDesc">AI 摘要在左，回饋輸入在右，增大摘要可視區域</div>
+                                        <div class="layout-option-title">Combined Mode (Horizontal)</div>
+                                        <div class="layout-option-desc">AI summary on the left, feedback input on the right.</div>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                    </div>
-                </div>
-
-
-
-                <!-- 語言設定卡片 -->
-                <div class="settings-card">
-                    <div class="settings-card-header">
-                        <h3 class="settings-card-title" data-i18n="settings.language">🌐 語言設定</h3>
-                    </div>
-                    <div class="settings-card-body">
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <div class="setting-label" data-i18n="settings.currentLanguage">當前語言</div>
-                                <div class="setting-description" data-i18n="settings.languageDesc">
-                                    選擇界面顯示語言
-                                </div>
-                            </div>
-                            <div class="language-selector-modern">
-                                <div class="language-options">
-                                    <div class="language-option" data-lang="zh-TW">
-                                        <div class="language-flag">🌏</div>
-                                        <div class="language-name">繁體中文</div>
-                                    </div>
-                                    <div class="language-option" data-lang="zh-CN">
-                                        <div class="language-flag">🌍</div>
-                                        <div class="language-name">简体中文</div>
-                                    </div>
-                                    <div class="language-option" data-lang="en">
-                                        <div class="language-flag">🌎</div>
-                                        <div class="language-name">English</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
                 <!-- 重置設定卡片 -->
                 <div class="settings-card">
                     <div class="settings-card-header">
-                        <h3 class="settings-card-title" data-i18n="settings.advanced">🔧 進階設定</h3>
+                        <h3 class="settings-card-title">🔧 Advanced Settings</h3>
                     </div>
                     <div class="settings-card-body">
                         <div class="setting-item" style="border-bottom: none;">
                             <div class="setting-info">
-                                <div class="setting-label" data-i18n="settings.reset">重置設定</div>
-                                <div class="setting-description" data-i18n="settings.resetDesc">
-                                    清除所有已保存的設定，恢復到預設狀態
+                                <div class="setting-label">Reset Settings</div>
+                                <div class="setting-description">
+                                    Clear all saved settings and restore to default.
                                 </div>
                             </div>
                             <button id="resetSettingsBtn" class="btn btn-secondary" style="font-size: 12px; padding: 6px 16px;">
-                                <span data-i18n="settings.reset">重置設定</span>
+                                <span>Reset Settings</span>
                             </button>
                         </div>
                     </div>
@@ -654,8 +616,8 @@
 
             <!-- 關於分頁 -->
             <div id="tab-about" class="tab-content">
-                <div class="section-description" data-i18n="about.description">
-                    關於 MCP Feedback Enhanced - 應用程式資訊、專案連結和致謝。
+                <div class="section-description">
+                    About MCP Feedback Enhanced - Application information, project links, and acknowledgments.
                 </div>
 
                 <!-- 主要資訊卡片 -->
@@ -670,8 +632,8 @@
                         <!-- 應用程式描述 -->
                         <div class="setting-item" style="border-bottom: none; padding-bottom: 16px;">
                             <div class="setting-info">
-                                <div class="setting-description" data-i18n="about.description" style="color: var(--text-secondary); font-size: 13px; line-height: 1.5;">
-                                    一個強大的 MCP 伺服器，為 AI 輔助開發工具提供人在回路的互動回饋功能。支援 Qt GUI 和 Web UI 雙介面，並具備圖片上傳、命令執行、多語言等豐富功能。
+                                <div class="setting-description" style="color: var(--text-secondary); font-size: 13px; line-height: 1.5;">
+                                    A powerful MCP server providing human-in-the-loop interactive feedback for AI-assisted development tools. Features include image uploads, command execution, and more.
                                 </div>
                             </div>
                         </div>
@@ -682,13 +644,13 @@
                         <!-- GitHub 專案 -->
                         <div class="setting-item" style="border-bottom: none; padding-bottom: 12px;">
                             <div class="setting-info">
-                                <div class="setting-label">📂 <span data-i18n="about.githubProject">GitHub 專案</span></div>
+                                <div class="setting-label">📂 <span>GitHub Project</span></div>
                                 <div class="setting-description" style="color: var(--text-secondary); font-size: 11px; margin-left: 24px;">
                                     https://github.com/Minidoracat/mcp-feedback-enhanced
                                 </div>
                             </div>
                             <button class="btn btn-primary" onclick="window.open('https://github.com/Minidoracat/mcp-feedback-enhanced', '_blank')" style="font-size: 12px; padding: 6px 16px;">
-                                <span data-i18n="about.visitGithub">訪問 GitHub</span>
+                                <span>Visit GitHub</span>
                             </button>
                         </div>
 
@@ -698,16 +660,16 @@
                         <!-- Discord 支援 -->
                         <div class="setting-item" style="border-bottom: none; padding-bottom: 12px;">
                             <div class="setting-info">
-                                <div class="setting-label">💬 <span data-i18n="about.discordSupport">Discord 支援</span></div>
+                                <div class="setting-label">💬 <span>Discord Support</span></div>
                                 <div class="setting-description" style="color: var(--text-secondary); font-size: 11px; margin-left: 24px;">
                                     https://discord.gg/ACjf9Q58
                                 </div>
-                                <div class="setting-description" data-i18n="about.contactDescription" style="color: var(--text-secondary); font-size: 12px; margin-left: 24px; margin-top: 8px;">
-                                    如需技術支援、問題回報或功能建議，歡迎透過 Discord 社群或 GitHub Issues 與我們聯繫。
+                                <div class="setting-description" style="color: var(--text-secondary); font-size: 12px; margin-left: 24px; margin-top: 8px;">
+                                    For technical support, bug reports, or feature suggestions, please contact us via the Discord community or GitHub Issues.
                                 </div>
                             </div>
                             <button class="btn" onclick="window.open('https://discord.gg/ACjf9Q58', '_blank')" style="background: #5865F2; color: white; font-size: 12px; padding: 6px 16px; border: none;">
-                                <span data-i18n="about.joinDiscord">加入 Discord</span>
+                                <span>Join Discord</span>
                             </button>
                         </div>
                     </div>
@@ -716,18 +678,18 @@
                 <!-- 致謝與貢獻卡片 -->
                 <div class="settings-card">
                     <div class="settings-card-header">
-                        <h3 class="settings-card-title" data-i18n="about.thanks">🙏 致謝與貢獻</h3>
+                        <h3 class="settings-card-title">🙏 Acknowledgments & Contributions</h3>
                     </div>
                     <div class="settings-card-body">
                         <div class="setting-item" style="border-bottom: none;">
                             <div class="setting-info">
-                                <div class="text-input" data-i18n="about.thanksText" style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; color: var(--text-primary); font-size: 12px; line-height: 1.5; min-height: 140px; max-height: 200px; overflow-y: auto; white-space: pre-wrap;">感謝原作者 Fábio Ferreira (@fabiomlferreira) 創建了原始的 interactive-feedback-mcp 專案。
+                                <div class="text-input" style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; color: var(--text-primary); font-size: 12px; line-height: 1.5; min-height: 140px; max-height: 200px; overflow-y: auto; white-space: pre-wrap;">Thanks to the original author Fábio Ferreira (@fabiomlferreira) for creating the original interactive-feedback-mcp project.
 
-本增強版本由 Minidoracat 開發和維護，大幅擴展了專案功能，新增了 GUI 介面、圖片支援、多語言能力以及許多其他改進功能。
+This enhanced version is developed and maintained by Minidoracat, significantly expanding project features, adding Web UI, image support, and many other improvements.
 
-同時感謝 sanshao85 的 mcp-feedback-collector 專案提供的 UI 設計靈感。
+Also, thanks to sanshao85 for the UI design inspiration from the mcp-feedback-collector project.
 
-開源協作讓技術變得更美好！</div>
+Open source collaboration makes technology better!</div>
                             </div>
                         </div>
                     </div>
@@ -737,33 +699,25 @@
 
         <!-- 底部操作按鈕 -->
         <footer class="footer-actions">
-            <button id="cancelBtn" class="btn btn-secondary" data-i18n="buttons.cancel">
-                ❌ 取消
+            <button id="cancelBtn" class="btn btn-secondary">
+                ❌ Cancel
             </button>
-            <button id="submitBtn" class="btn btn-success" data-i18n="buttons.submit">
-                ✅ 提交回饋
+            <button id="submitBtn" class="btn btn-success">
+                ✅ Submit Feedback
             </button>
         </footer>
     </div>
 
     <!-- WebSocket 和 JavaScript -->
-    <script src="/static/js/i18n.js?v=2025010510"></script>
     <script src="/static/js/app.js?v=2025010510"></script>
     <script>
-        // 等待 I18nManager 初始化完成後再初始化 FeedbackApp
+        // Initialize FeedbackApp
         async function initializeApp() {
             const sessionId = '{{ session_id }}';
-
-            // 確保 I18nManager 已經初始化
-            if (window.i18nManager) {
-                await window.i18nManager.init();
-            }
-
-            // 初始化 FeedbackApp
             window.feedbackApp = new FeedbackApp(sessionId);
         }
 
-        // 頁面載入完成後初始化
+        // Run initialization when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
         } else {

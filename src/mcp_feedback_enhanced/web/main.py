@@ -29,7 +29,6 @@ from .models import WebFeedbackSession, FeedbackResult
 from .routes import setup_routes
 from .utils import find_free_port, get_browser_opener
 from ..debug import web_debug_log as debug_log
-from ..i18n import get_i18n_manager
 
 
 class WebUIManager:
@@ -72,7 +71,6 @@ class WebUIManager:
 
         self.server_thread = None
         self.server_process = None
-        self.i18n = get_i18n_manager()
 
         # 設置靜態文件和模板
         self._setup_static_files()

@@ -10,7 +10,7 @@ MCP Interactive Feedback Enhanced
 增強功能: Web UI 支援、圖片上傳、現代化界面設計
 
 特色：
-- 雙介面支援（Qt GUI 和 Web UI）
+- Web UI 介面支援
 - 智慧環境檢測
 - 命令執行功能
 - 圖片上傳支援
@@ -29,19 +29,9 @@ from .server import main as run_server
 # 導入新的 Web UI 模組
 from .web import WebUIManager, launch_web_feedback_ui, get_web_ui_manager, stop_web_ui
 
-# 條件性導入 GUI 模組（只有在不強制使用 Web 時才導入）
-feedback_ui = None
-if not os.getenv('FORCE_WEB', '').lower() in ('true', '1', 'yes'):
-    try:
-        from .gui import feedback_ui
-    except ImportError:
-        # 如果 GUI 依賴不可用，設為 None
-        feedback_ui = None
-
 # 主要導出介面
 __all__ = [
     "run_server",
-    "feedback_ui",
     "WebUIManager",
     "launch_web_feedback_ui",
     "get_web_ui_manager",

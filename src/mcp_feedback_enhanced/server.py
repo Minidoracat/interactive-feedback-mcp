@@ -5,11 +5,11 @@ MCP 伺服器主程式
 ================
 
 MCP Feedback Enhanced 的核心伺服器程式，提供用戶互動回饋功能。
-支援智能環境檢測，自動選擇 Qt GUI 或 Web UI 介面。
+支援智能環境檢測，使用 Web UI 介面。
 
 主要功能：
 - 環境檢測（本地/遠端）
-- 介面選擇（GUI/Web UI）
+- Web UI 介面
 - 圖片處理和 MCP 整合
 - 回饋結果標準化
 
@@ -31,9 +31,6 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.utilities.types import Image as MCPImage
 from mcp.types import TextContent
 from pydantic import Field
-
-# 導入多語系支援
-from .i18n import get_i18n_manager
 
 # 導入統一的調試功能
 from .debug import server_debug_log as debug_log
@@ -204,16 +201,9 @@ def can_use_gui() -> bool:
     if is_remote_environment():
         return False
     
-    try:
-        from PySide6.QtWidgets import QApplication
-        debug_log("成功載入 PySide6，可使用 GUI")
-        return True
-    except ImportError:
-        debug_log("無法載入 PySide6，使用 Web UI")
-        return False
-    except Exception as e:
-        debug_log(f"GUI 初始化失敗: {e}")
-        return False
+    # GUI support has been removed.
+    debug_log("GUI support is removed from this application. Defaulting to Web UI.")
+    return False
 
 
 def save_feedback_to_file(feedback_data: dict, file_path: str = None) -> str:
@@ -409,39 +399,6 @@ def process_images(images_data: List[dict]) -> List[MCPImage]:
     return mcp_images
 
 
-async def launch_gui_with_timeout(project_dir: str, summary: str, timeout: int) -> dict:
-    """
-    啟動 GUI 模式並處理超時
-    """
-    debug_log(f"啟動 GUI 模式（超時：{timeout}秒）")
-    
-    try:
-        from .gui import feedback_ui_with_timeout
-        
-        # 直接調用帶超時的 GUI 函數
-        result = feedback_ui_with_timeout(project_dir, summary, timeout)
-        
-        if result:
-            return {
-                "logs": f"GUI 模式回饋收集完成",
-                "interactive_feedback": result.get("interactive_feedback", ""),
-                "images": result.get("images", [])
-            }
-        else:
-            return {
-                "logs": "用戶取消了回饋收集",
-                "interactive_feedback": "",
-                "images": []
-            }
-            
-    except TimeoutError as e:
-        # 超時異常 - 這是預期的行為
-        raise e
-    except Exception as e:
-        debug_log(f"GUI 啟動失败: {e}")
-        raise Exception(f"GUI 啟動失败: {e}")
-
-
 # ===== MCP 工具定義 =====
 @mcp.tool()
 async def interactive_feedback(
@@ -452,20 +409,13 @@ async def interactive_feedback(
     """
     收集用戶的互動回饋，支援文字和圖片
     
-    此工具會自動偵測運行環境：
-    - 遠端環境：使用 Web UI
-    - 本地環境：使用 Qt GUI
-    - 可透過 FORCE_WEB 環境變數強制使用 Web UI
+    此工具會自動偵測運行環境並使用 Web UI。
     
     用戶可以：
     1. 執行命令來驗證結果
     2. 提供文字回饋
     3. 上傳圖片作為回饋
     4. 查看 AI 的工作摘要
-    
-    介面控制（按優先級排序）：
-    1. **FORCE_WEB 環境變數**：在 mcp.json 中設置 "FORCE_WEB": "true"
-    2. 自動檢測：根據運行環境自動選擇
     
     調試模式：
     - 設置環境變數 MCP_DEBUG=true 可啟用詳細調試輸出
@@ -479,23 +429,13 @@ async def interactive_feedback(
     Returns:
         List: 包含 TextContent 和 MCPImage 對象的列表
     """
-    # 檢查環境變數 FORCE_WEB
-    force_web = False
-    env_force_web = os.getenv("FORCE_WEB", "").lower()
-    if env_force_web in ("true", "1", "yes", "on"):
-        force_web = True
-        debug_log("環境變數 FORCE_WEB 已啟用，強制使用 Web UI")
-    elif env_force_web in ("false", "0", "no", "off"):
-        force_web = False
-        debug_log("環境變數 FORCE_WEB 已停用，使用預設邏輯")
-    
     # 環境偵測
-    is_remote = is_remote_environment()
-    can_gui = can_use_gui()
-    use_web_ui = is_remote or not can_gui or force_web
+    # The logic for force_web, is_remote, and can_gui has been removed or simplified
+    # as Web UI is now the only option.
+    # is_remote = is_remote_environment()
+    # can_gui = can_use_gui() # Will always be false
     
-    debug_log(f"環境偵測結果 - 遠端: {is_remote}, GUI 可用: {can_gui}, 強制 Web UI: {force_web}")
-    debug_log(f"決定使用介面: {'Web UI' if use_web_ui else 'Qt GUI'}")
+    debug_log(f"環境偵測結果 - 使用 Web UI (Qt GUI support removed)")
     
     try:
         # 確保專案目錄存在
@@ -503,11 +443,8 @@ async def interactive_feedback(
             project_directory = os.getcwd()
         project_directory = os.path.abspath(project_directory)
         
-        # 選擇適當的介面
-        if use_web_ui:
-            result = await launch_web_ui_with_timeout(project_directory, summary, timeout)
-        else:
-            result = await launch_gui_with_timeout(project_directory, summary, timeout)
+        # Web UI is the only option
+        result = await launch_web_ui_with_timeout(project_directory, summary, timeout)
         
         # 處理取消情況
         if not result:
@@ -621,8 +558,8 @@ def get_system_info() -> str:
         "Python 版本": sys.version.split()[0],
         "WSL 環境": is_wsl,
         "遠端環境": is_remote,
-        "GUI 可用": can_gui,
-        "建議介面": "Web UI" if is_remote or not can_gui else "Qt GUI",
+        "GUI 可用": False, # GUI support is removed
+        "建議介面": "Web UI",
         "環境變數": {
             "SSH_CONNECTION": os.getenv("SSH_CONNECTION"),
             "SSH_CLIENT": os.getenv("SSH_CLIENT"),
@@ -651,8 +588,8 @@ def main():
         debug_log(f"   平台: {sys.platform}")
         debug_log(f"   編碼初始化: {'成功' if _encoding_initialized else '失敗'}")
         debug_log(f"   遠端環境: {is_remote_environment()}")
-        debug_log(f"   GUI 可用: {can_use_gui()}")
-        debug_log(f"   建議介面: {'Web UI' if is_remote_environment() or not can_use_gui() else 'Qt GUI'}")
+        debug_log(f"   GUI 可用: {can_use_gui()} (Expected False)")
+        debug_log(f"   建議介面: Web UI")
         debug_log("   等待來自 AI 助手的調用...")
         debug_log("準備啟動 MCP 伺服器...")
         debug_log("調用 mcp.run()...")

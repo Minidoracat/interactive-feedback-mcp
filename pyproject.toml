@@ -1,13 +1,13 @@
 [project]
 name = "mcp-feedback-enhanced"
 version = "2.2.5"
-description = "Enhanced MCP server for interactive user feedback and command execution in AI-assisted development, featuring dual UI support (Qt GUI and Web UI) with intelligent environment detection."
+description = "Enhanced MCP server for interactive user feedback and command execution in AI-assisted development, featuring a Web UI suitable for local, SSH remote, and WSL environments."
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
     { name = "Minidoracat", email = "minidora0702@gmail.com" }
 ]
-keywords = ["mcp", "ai", "feedback", "gui", "web-ui", "interactive", "development"]
+keywords = ["mcp", "ai", "feedback", "web-ui", "interactive", "development"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -21,7 +21,6 @@ classifiers = [
 dependencies = [
     "fastmcp>=2.0.0",
     "psutil>=7.0.0",
-    "pyside6>=6.8.2.1",
     "fastapi>=0.115.0",
     "uvicorn>=0.30.0",
     "jinja2>=3.1.0",
