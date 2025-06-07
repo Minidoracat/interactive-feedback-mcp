@@ -1,0 +1,244 @@
+// SCSS Variables for MCP Feedback Enhanced Frontend
+// Vue.js 風格的 AI-人類協作主題
+
+// Vue.js 品牌色彩系統
+$vue-green: #4fc08d;
+$vue-green-light: #42b883;
+$vue-green-dark: #369970;
+$vue-green-lighter: #7fd3a3;
+$vue-green-darker: #2d7a5a;
+
+// 主色調 - 採用 Vue.js 綠色
+$primary-color: $vue-green;
+$primary-color-light: $vue-green-light;
+$primary-color-dark: $vue-green-dark;
+
+$secondary-color: #6b7280;
+$secondary-color-light: #9ca3af;
+$secondary-color-dark: #374151;
+
+$success-color: #10b981;
+$success-color-light: #34d399;
+$success-color-dark: #059669;
+
+$warning-color: #f59e0b;
+$warning-color-light: #fbbf24;
+$warning-color-dark: #d97706;
+
+$error-color: #ef4444;
+$error-color-light: #f87171;
+$error-color-dark: #dc2626;
+
+$info-color: #06b6d4;
+$info-color-light: #22d3ee;
+$info-color-dark: #0891b2;
+
+// AI-人類協作專用色彩
+$ai-color: #8b5cf6;           // AI 相關元素 - 紫色
+$ai-color-light: #a78bfa;
+$ai-color-dark: #7c3aed;
+
+$human-color: #f59e0b;        // 人類相關元素 - 橙色
+$human-color-light: #fbbf24;
+$human-color-dark: #d97706;
+
+$collaboration-color: $vue-green;  // 協作相關元素 - Vue 綠色
+$collaboration-bg: rgba(79, 192, 141, 0.05);
+$collaboration-border: rgba(79, 192, 141, 0.2);
+
+// Neutral colors
+$white: #ffffff;
+$black: #000000;
+
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// Text colors
+$text-color: $gray-700;
+$text-color-light: $gray-500;
+$text-color-dark: $gray-900;
+$text-color-muted: $gray-400;
+
+// Background colors
+$background-color: $white;
+$background-color-alt: $gray-50;
+$background-color-dark: $gray-800;
+
+// Border colors
+$border-color: $gray-200;
+$border-color-light: $gray-100;
+$border-color-dark: $gray-300;
+
+// Typography
+$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-family-mono: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+
+$font-size-xs: 0.75rem;    // 12px
+$font-size-sm: 0.875rem;   // 14px
+$font-size-base: 1rem;     // 16px
+$font-size-lg: 1.125rem;   // 18px
+$font-size-xl: 1.25rem;    // 20px
+$font-size-2xl: 1.5rem;    // 24px
+$font-size-3xl: 1.875rem;  // 30px
+$font-size-4xl: 2.25rem;   // 36px
+
+$font-size-h1: $font-size-3xl;
+$font-size-h2: $font-size-2xl;
+$font-size-h3: $font-size-xl;
+$font-size-h4: $font-size-lg;
+$font-size-h5: $font-size-base;
+$font-size-h6: $font-size-sm;
+
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+$line-height-tight: 1.25;
+$line-height-base: 1.5;
+$line-height-relaxed: 1.75;
+$line-height-heading: 1.2;
+
+// 現代化間距系統 (4px 基準)
+$spacing-1: 0.25rem;    // 4px
+$spacing-2: 0.5rem;     // 8px
+$spacing-3: 0.75rem;    // 12px
+$spacing-4: 1rem;       // 16px
+$spacing-5: 1.25rem;    // 20px
+$spacing-6: 1.5rem;     // 24px
+$spacing-8: 2rem;       // 32px
+$spacing-10: 2.5rem;    // 40px
+$spacing-12: 3rem;      // 48px
+$spacing-16: 4rem;      // 64px
+
+// 向後兼容的別名
+$spacing-xs: $spacing-1;
+$spacing-sm: $spacing-2;
+$spacing-md: $spacing-3;
+$spacing-base: $spacing-4;
+$spacing-lg: $spacing-6;
+$spacing-xl: $spacing-8;
+$spacing-2xl: $spacing-12;
+$spacing-3xl: $spacing-16;
+
+// 現代化圓角設計
+$border-radius-none: 0;
+$border-radius-sm: 0.25rem;   // 4px
+$border-radius: 0.5rem;       // 8px  - 更現代化的默認值
+$border-radius-md: 0.75rem;   // 12px
+$border-radius-lg: 1rem;      // 16px - 卡片和面板
+$border-radius-xl: 1.5rem;    // 24px - 大型組件
+$border-radius-2xl: 2rem;     // 32px - 特殊元素
+$border-radius-full: 9999px;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+// Z-index
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+// Transitions
+$transition-fast: 0.15s ease;
+$transition-base: 0.2s ease;
+$transition-slow: 0.3s ease;
+
+// Component specific variables
+$header-height: 4rem;
+$sidebar-width: 16rem;
+$footer-height: 3rem;
+
+// Form elements
+$input-border-color: $border-color;
+$input-border-color-focus: $primary-color;
+$input-background: $white;
+$input-padding-y: 0.5rem;
+$input-padding-x: 0.75rem;
+$input-border-radius: $border-radius;
+
+// Buttons
+$button-padding-y: 0.5rem;
+$button-padding-x: 1rem;
+$button-border-radius: $border-radius;
+$button-font-weight: $font-weight-medium;
+
+// Cards
+$card-background: $white;
+$card-border-color: $border-color;
+$card-border-radius: $border-radius-lg;
+$card-padding: 1.5rem;
+$card-shadow: $shadow;
+
+// Status colors for specific states
+$status-online: $success-color;
+$status-offline: $error-color;
+$status-away: $warning-color;
+$status-busy: $error-color;
+
+// WebSocket connection states
+$ws-connected: $success-color;
+$ws-connecting: $warning-color;
+$ws-disconnected: $error-color;
+$ws-error: $error-color;
+
+// AI-人類協作組件專用變量
+$collaboration-panel-bg: rgba(255, 255, 255, 0.98);
+$collaboration-panel-border: rgba(255, 255, 255, 0.2);
+$collaboration-panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+$collaboration-panel-radius: $border-radius-lg;
+
+$ai-panel-accent: $ai-color;
+$human-panel-accent: $human-color;
+
+// 快速回應按鈕
+$quick-response-confirm: $success-color;
+$quick-response-reject: $error-color;
+$quick-response-info: $info-color;
+$quick-response-later: $warning-color;
+
+// 狀態指示器
+$status-working: $success-color;
+$status-paused: $warning-color;
+$status-completed: $info-color;
+$status-error: $error-color;
+$status-idle: $gray-500;
+
+// 進度條
+$progress-bg: $gray-200;
+$progress-fill: linear-gradient(90deg, $vue-green 0%, $vue-green-light 100%);
+
+// 微交互動畫
+$hover-transform: translateY(-1px);
+$hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+$active-transform: translateY(0);
+
+// 響應式斷點增強
+$mobile-first: true;
+$container-max-width: 1200px;

@@ -1,0 +1,426 @@
+/**
+ * 組件樣式文件
+ * 包含可重用的組件樣式和模式
+ */
+
+@use 'variables' as *;
+
+// ===== 按鈕組件 =====
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  
+  // 按鈕尺寸
+  &.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: $font-size-sm;
+  }
+  
+  &.btn-lg {
+    padding: 1rem 2rem;
+    font-size: $font-size-lg;
+  }
+  
+  // 按鈕變體
+  &.btn-primary {
+    background-color: $primary-color;
+    color: $white;
+    border-color: $primary-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $primary-color-dark;
+      border-color: $primary-color-dark;
+    }
+  }
+  
+  &.btn-secondary {
+    background-color: $secondary-color;
+    color: $white;
+    border-color: $secondary-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $secondary-color-dark;
+      border-color: $secondary-color-dark;
+    }
+  }
+  
+  &.btn-success {
+    background-color: $success-color;
+    color: $white;
+    border-color: $success-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $success-color-dark;
+      border-color: $success-color-dark;
+    }
+  }
+  
+  &.btn-warning {
+    background-color: $warning-color;
+    color: $white;
+    border-color: $warning-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $warning-color-dark;
+      border-color: $warning-color-dark;
+    }
+  }
+  
+  &.btn-error {
+    background-color: $error-color;
+    color: $white;
+    border-color: $error-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $error-color-dark;
+      border-color: $error-color-dark;
+    }
+  }
+  
+  &.btn-outline {
+    background-color: transparent;
+    color: $primary-color;
+    border-color: $primary-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $primary-color;
+      color: $white;
+    }
+  }
+  
+  &.btn-ghost {
+    background-color: transparent;
+    color: $text-color;
+    border-color: transparent;
+    
+    &:hover:not(:disabled) {
+      background-color: $gray-100;
+    }
+  }
+}
+
+// ===== 表單組件 =====
+.form-group {
+  margin-bottom: 1.5rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-label {
+  display: block;
+  font-weight: $font-weight-medium;
+  color: $text-color-dark;
+  margin-bottom: 0.5rem;
+  
+  &.required::after {
+    content: ' *';
+    color: $error-color;
+  }
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  background-color: $white;
+  transition: all 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &:disabled {
+    background-color: $gray-50;
+    color: $text-color-muted;
+    cursor: not-allowed;
+  }
+  
+  &.error {
+    border-color: $error-color;
+    box-shadow: 0 0 0 3px rgba($error-color, 0.1);
+  }
+  
+  &.success {
+    border-color: $success-color;
+    box-shadow: 0 0 0 3px rgba($success-color, 0.1);
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+  appearance: none;
+}
+
+.form-help {
+  margin-top: 0.25rem;
+  font-size: $font-size-sm;
+  color: $text-color-muted;
+}
+
+.form-error {
+  margin-top: 0.25rem;
+  font-size: $font-size-sm;
+  color: $error-color;
+}
+
+// ===== 卡片組件 =====
+.card {
+  background-color: $white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  
+  &.card-hover {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: $shadow-lg;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid $border-color;
+  background-color: $gray-50;
+  
+  .card-title {
+    margin: 0;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-color-dark;
+  }
+  
+  .card-subtitle {
+    margin: 0.25rem 0 0 0;
+    font-size: $font-size-sm;
+    color: $text-color-muted;
+  }
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid $border-color;
+  background-color: $gray-50;
+}
+
+// ===== 徽章組件 =====
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  border-radius: $border-radius-full;
+  
+  &.badge-primary {
+    background-color: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+  
+  &.badge-secondary {
+    background-color: rgba($secondary-color, 0.1);
+    color: $secondary-color;
+  }
+  
+  &.badge-success {
+    background-color: rgba($success-color, 0.1);
+    color: $success-color;
+  }
+  
+  &.badge-warning {
+    background-color: rgba($warning-color, 0.1);
+    color: $warning-color;
+  }
+  
+  &.badge-error {
+    background-color: rgba($error-color, 0.1);
+    color: $error-color;
+  }
+  
+  &.badge-gray {
+    background-color: $gray-100;
+    color: $gray-600;
+  }
+}
+
+// ===== 進度條組件 =====
+.progress {
+  width: 100%;
+  height: 0.5rem;
+  background-color: $gray-200;
+  border-radius: $border-radius-full;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: $primary-color;
+  transition: width 0.3s ease;
+  
+  &.progress-success {
+    background-color: $success-color;
+  }
+  
+  &.progress-warning {
+    background-color: $warning-color;
+  }
+  
+  &.progress-error {
+    background-color: $error-color;
+  }
+}
+
+// ===== 警告框組件 =====
+.alert {
+  padding: 1rem;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  margin-bottom: 1rem;
+  
+  &.alert-primary {
+    background-color: rgba($primary-color, 0.1);
+    border-color: rgba($primary-color, 0.2);
+    color: $primary-color-dark;
+  }
+  
+  &.alert-success {
+    background-color: rgba($success-color, 0.1);
+    border-color: rgba($success-color, 0.2);
+    color: $success-color-dark;
+  }
+  
+  &.alert-warning {
+    background-color: rgba($warning-color, 0.1);
+    border-color: rgba($warning-color, 0.2);
+    color: $warning-color-dark;
+  }
+  
+  &.alert-error {
+    background-color: rgba($error-color, 0.1);
+    border-color: rgba($error-color, 0.2);
+    color: $error-color-dark;
+  }
+  
+  &.alert-info {
+    background-color: rgba($info-color, 0.1);
+    border-color: rgba($info-color, 0.2);
+    color: $info-color-dark;
+  }
+}
+
+// ===== 載入動畫 =====
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  
+  &.spinner-sm {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  
+  &.spinner-lg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ===== 工具提示 =====
+.tooltip {
+  position: relative;
+  
+  &::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem;
+    background-color: $gray-900;
+    color: $white;
+    font-size: $font-size-sm;
+    border-radius: $border-radius;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+  }
+  
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+// ===== 響應式工具 =====
+@media (max-width: 640px) {
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .card-header,
+  .card-body,
+  .card-footer {
+    padding: 1rem;
+  }
+}

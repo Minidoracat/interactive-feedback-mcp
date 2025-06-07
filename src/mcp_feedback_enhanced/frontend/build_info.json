@@ -1,0 +1,16 @@
+{
+  "build_time": "2025-06-07 08:17:36",
+  "build_duration": 2.2,
+  "node_version": "v22.15.0",
+  "npm_version": "10.8.2",
+  "frontend_dir": "G:\\github\\mcp-feedback-enhanced\\frontend-dev",
+  "dist_dir": "G:\\github\\mcp-feedback-enhanced\\frontend-dev\\dist",
+  "backend_dir": "G:\\github\\mcp-feedback-enhanced\\src\\mcp_feedback_enhanced\\frontend",
+  "frontend_version": "0.1.0",
+  "dependencies": {
+    "@vueuse/core": "^10.5.0",
+    "axios": "^1.6.0",
+    "pinia": "^2.1.0",
+    "vue": "^3.4.0"
+  }
+}

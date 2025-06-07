@@ -1,0 +1,124 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "mcp-feedback-enhanced"
+version = "0.1.0"
+description = "A modern MCP feedback collection system with real-time web interface and file upload support"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "MCP Feedback Enhanced Team", email = "contact@example.com"}
+]
+keywords = ["mcp", "feedback", "fastapi", "vue", "websocket"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Framework :: FastAPI",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "websockets>=12.0",
+    "pydantic>=2.5.0",
+    "typer>=0.9.0",
+    "pillow>=10.1.0",
+    "mcp>=1.9.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/Minidoracat/mcp-feedback-enhanced"
+Repository = "https://github.com/Minidoracat/mcp-feedback-enhanced"
+Documentation = "https://github.com/Minidoracat/mcp-feedback-enhanced#readme"
+Issues = "https://github.com/Minidoracat/mcp-feedback-enhanced/issues"
+
+[project.scripts]
+mcp-feedback-enhanced = "mcp_feedback_enhanced.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+]
+test = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "httpx>=0.25.0",
+]
+
+[tool.pdm]
+version = { source = "file", path = "src/mcp_feedback_enhanced/__init__.py" }
+
+[tool.pdm.scripts]
+dev = "uvicorn mcp_feedback_enhanced.backend.main:app --reload --host 0.0.0.0 --port 8000"
+serve = "mcp-feedback-enhanced serve"
+test = "pytest tests/ -v"
+test-cov = "pytest tests/ -v --cov=mcp_feedback_enhanced --cov-report=html"
+lint = "flake8 src/ tests/"
+format = "black src/ tests/ && isort src/ tests/"
+build-frontend = "python scripts/build_frontend.py"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+asyncio_mode = "auto"
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
