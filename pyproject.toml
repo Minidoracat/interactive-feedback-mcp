@@ -27,6 +27,7 @@ dependencies = [
     "jinja2>=3.1.0",
     "websockets>=13.0.0",
     "aiohttp>=3.8.0",
+    "markdown>=3.4.0",
 ]
 
 [project.optional-dependencies]
