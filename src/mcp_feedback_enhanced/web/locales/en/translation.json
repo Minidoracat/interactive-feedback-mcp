@@ -1,221 +1,290 @@
 {
-    "app": {
-        "title": "MCP Interactive Feedback System",
-        "subtitle": "AI Assistant Interactive Feedback Platform",
-        "projectDirectory": "Project Directory"
-    },
-    "tabs": {
-        "feedback": "💬 Feedback",
-        "summary": "📋 AI Summary",
-        "commands": "⚡ Commands",
-        "command": "⚡ Commands",
-        "settings": "⚙️ Settings",
-        "combined": "📝 Workspace",
-        "about": "ℹ️ About"
-    },
-    "feedback": {
-        "title": "💬 Provide Feedback",
-        "description": "Please provide your feedback on the AI assistant's work. You can enter text feedback and upload related images.",
-        "textLabel": "Text Feedback",
-        "placeholder": "Please enter your feedback here...",
-        "detailedPlaceholder": "Please enter your feedback here...\n\n💡 Tips:\n• Press Ctrl+Enter/Cmd+Enter (numpad supported) for quick submit\n• Press Ctrl+V/Cmd+V to paste clipboard images directly",
-        "imageLabel": "Image Attachments (Optional)",
-        "imageUploadText": "📎 Click to select images or drag and drop images here\nSupports PNG, JPG, JPEG, GIF, BMP, WebP formats",
-        "submit": "✅ Submit Feedback",
-        "uploading": "Uploading...",
-        "dragdrop": "Drag and drop images here or click to upload",
-        "selectfiles": "Select Files",
-        "processing": "Processing...",
-        "success": "Feedback submitted successfully!",
-        "error": "Error submitting feedback",
-        "shortcuts": {
-            "submit": "Ctrl+Enter to submit (Cmd+Enter on Mac, numpad supported)",
-            "clear": "Ctrl+Delete to clear (Cmd+Delete on Mac)",
-            "paste": "Ctrl+V to paste images (Cmd+V on Mac)"
-        }
-    },
-    "summary": {
-        "title": "📋 AI Work Summary",
-        "description": "Below is the work summary completed by the AI assistant. Please review carefully and provide your feedback.",
-        "placeholder": "AI work summary will be displayed here...",
-        "empty": "No summary content available",
-        "lastupdate": "Last updated",
-        "refresh": "Refresh"
-    },
-    "commands": {
-        "title": "⚡ Command Execution",
-        "description": "Execute commands here to verify results or collect more information. Commands will be executed in the project directory.",
-        "inputLabel": "Command Input",
-        "placeholder": "Enter command to execute...",
-        "execute": "▶️ Execute",
-        "runButton": "▶️ Execute",
-        "clear": "Clear",
-        "output": "Command Output",
-        "outputLabel": "Command Output",
-        "running": "Running...",
-        "completed": "Completed",
-        "error": "Execution Error",
-        "history": "Command History"
-    },
-    "command": {
-        "title": "⚡ Command Execution",
-        "description": "Execute commands here to verify results or collect more information. Commands will be executed in the project directory.",
-        "inputLabel": "Command Input",
-        "placeholder": "Enter command to execute...",
-        "execute": "▶️ Execute",
-        "runButton": "▶️ Execute",
-        "clear": "Clear",
-        "output": "Command Output",
-        "outputLabel": "Command Output",
-        "running": "Running...",
-        "completed": "Completed",
-        "error": "Execution Error",
-        "history": "Command History"
-    },
-    "combined": {
-        "description": "AI summary and feedback input are on the same page for easy comparison.",
-        "summaryTitle": "📋 AI Work Summary",
-        "feedbackTitle": "💬 Provide Feedback"
-    },
-    "settings": {
-        "title": "⚙️ Settings",
-        "description": "Adjust interface settings and preference options.",
-        "language": "Language",
-        "currentLanguage": "Current Language",
-        "languageDesc": "Select interface display language",
-        "interface": "Interface Settings",
-        "layoutMode": "Interface Layout Mode",
-        "layoutModeDesc": "Select how AI summary and feedback input are displayed",
-        "combinedVertical": "Vertical Layout",
-        "combinedVerticalDesc": "AI summary on top, feedback input below, suitable for standard screens",
-        "combinedHorizontal": "Horizontal Layout",
-        "combinedHorizontalDesc": "AI summary on left, feedback input on right, suitable for widescreen displays",
-        "autoClose": "Auto Close Page",
-        "autoCloseDesc": "Automatically close page after submitting feedback",
-        "theme": "Theme",
-        "notifications": "Notifications",
-        "advanced": "Advanced Settings",
-        "save": "Save Settings",
-        "reset": "Reset Settings",
-        "resetDesc": "Clear all saved settings and restore to default state",
-        "resetConfirm": "Are you sure you want to reset all settings? This will clear all saved preferences.",
-        "resetSuccess": "Settings have been reset to default values",
-        "resetError": "Error occurred while resetting settings",
-        "timeout": "Connection Timeout (seconds)",
-        "autorefresh": "Auto Refresh",
-        "debug": "Debug Mode"
-    },
-    "languages": {
-        "zh-TW": "繁體中文",
-        "zh-CN": "简体中文",
-        "en": "English"
-    },
-    "themes": {
-        "dark": "Dark",
-        "light": "Light",
-        "auto": "Auto"
-    },
-    "status": {
-        "connected": "Connected",
-        "connecting": "Connecting...",
-        "disconnected": "Disconnected",
-        "reconnecting": "Reconnecting...",
-        "error": "Connection Error",
-        "waiting": {
-            "title": "Waiting for Feedback",
-            "message": "Please provide your feedback"
-        },
-        "processing": {
-            "title": "Processing",
-            "message": "Submitting your feedback..."
-        },
-        "submitted": {
-            "title": "Feedback Submitted",
-            "message": "Waiting for next MCP call"
-        }
-    },
-    "notifications": {
-        "feedback_sent": "Feedback sent",
-        "command_executed": "Command executed",
-        "settings_saved": "Settings saved",
-        "connection_lost": "Connection lost",
-        "connection_restored": "Connection restored"
-    },
-    "connection": {
-        "waiting": "Connected - Waiting for feedback",
-        "submitted": "Connected - Feedback submitted",
-        "processing": "Connected - Processing"
-    },
-    "errors": {
-        "connection_failed": "Connection failed",
-        "upload_failed": "Upload failed",
-        "command_failed": "Command execution failed",
-        "invalid_input": "Invalid input",
-        "timeout": "Request timeout"
-    },
-    "buttons": {
-        "ok": "OK",
-        "cancel": "❌ Cancel",
-        "submit": "✅ Submit Feedback",
-        "processing": "Processing...",
-        "submitted": "Submitted",
-        "retry": "Retry",
-        "close": "Close",
-        "upload": "Upload",
-        "download": "Download"
-    },
-    "session": {
-        "timeout": "⏰ Session has timed out, interface will close automatically",
-        "timeoutWarning": "Session is about to timeout",
-        "timeoutDescription": "Due to prolonged inactivity, the session has timed out. The interface will automatically close in 3 seconds.",
-        "closing": "Closing..."
-    },
-    "autoRefresh": {
-        "enable": "Auto Detect",
-        "seconds": "seconds",
-        "disabled": "Disabled",
-        "enabled": "Detecting",
-        "checking": "Checking",
-        "detected": "Detected",
-        "error": "Failed"
-    },
-
-    "dynamic": {
-        "aiSummary": "Test Web UI Functionality\n\n🎯 **Test Items:**\n- Web UI server startup and operation\n- WebSocket real-time communication\n- Feedback submission functionality\n- Image upload and preview\n- Command execution functionality\n- Smart Ctrl+V image pasting\n- Multi-language interface functionality\n\n📋 **Test Steps:**\n1. Test image upload (drag-drop, file selection, clipboard)\n2. Press Ctrl+V in text box to test smart pasting\n3. Try switching languages (Traditional Chinese/Simplified Chinese/English)\n4. Test command execution functionality\n5. Submit feedback and images\n\nPlease test these features and provide feedback!",
-        "terminalWelcome": "Welcome to Interactive Feedback Terminal\n========================================\nProject Directory: {sessionId}\nEnter commands and press Enter or click Execute button\nSupported commands: ls, dir, pwd, cat, type, etc.\n\n$ "
-    },
-    "about": {
-        "title": "ℹ️ About",
-        "description": "A powerful MCP server that provides human-in-the-loop interactive feedback functionality for AI-assisted development tools. Supports both Qt GUI and Web UI interfaces, with rich features including image upload, command execution, multi-language support, and more.",
-        "appInfo": "Application Information",
-        "version": "Version",
-        "projectLinks": "Project Links",
-        "githubProject": "GitHub Project",
-        "visitGithub": "Visit GitHub",
-        "contact": "Contact & Support",
-        "discordSupport": "Discord Support",
-        "joinDiscord": "Join Discord",
-        "contactDescription": "For technical support, issue reports, or feature suggestions, please contact us through Discord community or GitHub Issues.",
-        "thanks": "Thanks & Contributions",
-        "thanksText": "Thanks to the original author Fábio Ferreira (@fabiomlferreira) for creating the original interactive-feedback-mcp project.\n\nThis enhanced version is developed and maintained by Minidoracat, greatly expanding the project functionality with GUI interface, image support, multi-language capabilities, and many other improvements.\n\nSpecial thanks to sanshao85's mcp-feedback-collector project for UI design inspiration.\n\nOpen source collaboration makes technology better!"
-    },
-    "images": {
-        "settings": {
-            "title": "Image Settings",
-            "sizeLimit": "Image Size Limit",
-            "sizeLimitOptions": {
-                "unlimited": "Unlimited",
-                "1mb": "1MB",
-                "3mb": "3MB",
-                "5mb": "5MB"
-            },
-            "base64Detail": "Base64 Compatibility Mode",
-            "base64DetailHelp": "When enabled, includes full Base64 image data in text, improving compatibility with certain AI models",
-            "base64Warning": "⚠️ Increases transmission size",
-            "compatibilityHint": "💡 Images not recognized correctly?",
-            "enableBase64Hint": "Try enabling Base64 compatibility mode"
-        },
-        "sizeLimitExceeded": "Image {filename} size is {size}, exceeds {limit} limit!",
-        "sizeLimitExceededAdvice": "Consider compressing the image with editing software before uploading, or adjust the image size limit settings."
+  "app": {
+    "title": "MCP Interactive Feedback System",
+    "subtitle": "AI Assistant Interactive Feedback Platform",
+    "projectDirectory": "Project Directory"
+  },
+  "tabs": {
+    "feedback": "💬 Feedback",
+    "summary": "📋 AI Summary",
+    "commands": "⚡ Commands",
+    "command": "⚡ Commands",
+    "settings": "⚙️ Settings",
+    "combined": "📝 Workspace",
+    "about": "ℹ️ About"
+  },
+  "feedback": {
+    "title": "💬 Provide Feedback",
+    "description": "Please provide your feedback on the AI assistant's work. You can enter text feedback and upload related images.",
+    "textLabel": "Text Feedback",
+    "placeholder": "Please enter your feedback here...",
+    "detailedPlaceholder": "Please enter your feedback here...\n\n💡 Tips:\n• Press Ctrl+Enter/Cmd+Enter (numpad supported) for quick submit\n• Press Ctrl+V/Cmd+V to paste clipboard images directly",
+    "imageLabel": "Image Attachments (Optional)",
+    "imageUploadText": "📎 Click to select images or drag and drop images here\nSupports PNG, JPG, JPEG, GIF, BMP, WebP formats",
+    "submit": "✅ Submit Feedback",
+    "uploading": "Uploading...",
+    "dragdrop": "Drag and drop images here or click to upload",
+    "selectfiles": "Select Files",
+    "processing": "Processing...",
+    "success": "Feedback submitted successfully!",
+    "successKeepOpen": "✅ Feedback submitted successfully! Page will remain open for next call.",
+    "requireInput": "Please provide feedback text or upload images",
+    "error": "Error submitting feedback",
+    "shortcuts": {
+      "submit": "Ctrl+Enter to submit (Cmd+Enter on Mac, numpad supported)",
+      "clear": "Ctrl+Delete to clear (Cmd+Delete on Mac)",
+      "paste": "Ctrl+V to paste images (Cmd+V on Mac)"
     }
+  },
+  "summary": {
+    "title": "📋 AI Work Summary",
+    "description": "Below is the work summary completed by the AI assistant. Please review carefully and provide your feedback.",
+    "placeholder": "AI work summary will be displayed here...",
+    "empty": "No summary content available",
+    "lastupdate": "Last updated",
+    "refresh": "Refresh"
+  },
+  "commands": {
+    "title": "⚡ Command Execution",
+    "description": "Execute commands here to verify results or collect more information. Commands will be executed in the project directory.",
+    "inputLabel": "Command Input",
+    "placeholder": "Enter command to execute...",
+    "execute": "▶️ Execute",
+    "runButton": "▶️ Execute",
+    "clear": "Clear",
+    "output": "Command Output",
+    "outputLabel": "Command Output",
+    "running": "Running...",
+    "completed": "Completed",
+    "completedWithCode": "Command completed, exit code: {exitCode}",
+    "error": "Execution Error",
+    "commandError": "Error: {error}",
+    "history": "Command History",
+    "pleaseEnterCommand": "⚠️ Please enter a command",
+    "websocketNotConnected": "❌ WebSocket not connected, cannot execute command",
+    "executing": "[Executing...]"
+  },
+  "command": {
+    "title": "⚡ Command Execution",
+    "description": "Execute commands here to verify results or collect more information. Commands will be executed in the project directory.",
+    "inputLabel": "Command Input",
+    "placeholder": "Enter command to execute...",
+    "execute": "▶️ Execute",
+    "runButton": "▶️ Execute",
+    "clear": "Clear",
+    "output": "Command Output",
+    "outputLabel": "Command Output",
+    "running": "Running...",
+    "completed": "Completed",
+    "error": "Execution Error",
+    "history": "Command History"
+  },
+  "combined": {
+    "description": "AI summary and feedback input are on the same page for easy comparison.",
+    "summaryTitle": "📋 AI Work Summary",
+    "feedbackTitle": "💬 Provide Feedback"
+  },
+  "settings": {
+    "title": "⚙️ Settings",
+    "description": "Adjust interface settings and preference options.",
+    "language": "Language",
+    "currentLanguage": "Current Language",
+    "languageDesc": "Select interface display language",
+    "interface": "Interface Settings",
+    "layoutMode": "Interface Layout Mode",
+    "layoutModeDesc": "Select how AI summary and feedback input are displayed",
+    "combinedVertical": "Vertical Layout",
+    "combinedVerticalDesc": "AI summary on top, feedback input below, suitable for standard screens",
+    "combinedHorizontal": "Horizontal Layout",
+    "combinedHorizontalDesc": "AI summary on left, feedback input on right, suitable for widescreen displays",
+    "autoClose": "Auto Close Page",
+    "autoCloseDesc": "Automatically close page after submitting feedback",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "advanced": "Advanced Settings",
+    "save": "Save Settings",
+    "reset": "Reset Settings",
+    "resetDesc": "Clear all saved settings and restore to default state",
+    "resetConfirm": "Are you sure you want to reset all settings? This will clear all saved preferences.",
+    "resetSuccess": "Settings have been reset to default values",
+    "resetError": "Error occurred while resetting settings",
+    "timeout": "Connection Timeout (seconds)",
+    "autorefresh": "Auto Refresh",
+    "debug": "Debug Mode"
+  },
+  "languages": {
+    "zh-TW": "繁體中文",
+    "zh-CN": "简体中文",
+    "en": "English"
+  },
+  "themes": {
+    "dark": "Dark",
+    "light": "Light",
+    "auto": "Auto"
+  },
+  "status": {
+    "connected": "Connected",
+    "connecting": "Connecting...",
+    "disconnected": "Disconnected",
+    "reconnecting": "Reconnecting...",
+    "error": "Connection Error",
+    "noActiveSession": "No active session",
+    "waiting": {
+      "title": "Waiting for Feedback",
+      "message": "Please provide your feedback",
+      "userFeedback": "Waiting for user feedback..."
+    },
+    "processing": {
+      "title": "Processing",
+      "message": "Submitting your feedback...",
+      "pleaseWait": "Processing, please wait"
+    },
+    "submitted": {
+      "title": "Feedback Submitted",
+      "message": "Waiting for next MCP call",
+      "waitingNext": "Feedback submitted, waiting for next MCP call..."
+    },
+    "connecting": {
+      "pendingSubmission": "WebSocket connecting, feedback will be auto-submitted when ready..."
+    }
+  },
+  "notifications": {
+    "feedback_sent": "Feedback sent",
+    "command_executed": "Command executed",
+    "settings_saved": "Settings saved",
+    "connection_lost": "Connection lost",
+    "connection_restored": "Connection restored"
+  },
+  "connection": {
+    "waiting": "Connected - Waiting for feedback",
+    "submitted": "Connected - Feedback submitted",
+    "processing": "Connected - Processing"
+  },
+  "errors": {
+    "connection_failed": "Connection failed",
+    "upload_failed": "Upload failed",
+    "command_failed": "Command execution failed",
+    "invalid_input": "Invalid input",
+    "timeout": "Request timeout",
+    "websocketConnectionFailed": "WebSocket connection failed, please refresh page to retry",
+    "connectionFailed": "Connection failed",
+    "sendFailed": "Send failed, please try again"
+  },
+  "buttons": {
+    "ok": "OK",
+    "cancel": "❌ Cancel",
+    "submit": "✅ Submit Feedback",
+    "processing": "Processing...",
+    "submitted": "Submitted",
+    "retry": "Retry",
+    "close": "Close",
+    "upload": "Upload",
+    "download": "Download"
+  },
+  "session": {
+    "timeout": "⏰ Session has timed out, interface will close automatically",
+    "timeoutWarning": "Session is about to timeout",
+    "timeoutDescription": "Due to prolonged inactivity, the session has timed out. The interface will automatically close in 3 seconds.",
+    "closing": "Closing..."
+  },
+  "autoRefresh": {
+    "enable": "Auto Detect",
+    "seconds": "seconds",
+    "disabled": "Disabled",
+    "enabled": "Detecting",
+    "checking": "Checking",
+    "detected": "Detected",
+    "error": "Failed"
+  },
+
+  "dynamic": {
+    "aiSummary": "Test Web UI Functionality\n\n🎯 **Test Items:**\n- Web UI server startup and operation\n- WebSocket real-time communication\n- Feedback submission functionality\n- Image upload and preview\n- Command execution functionality\n- Smart Ctrl+V image pasting\n- Multi-language interface functionality\n\n📋 **Test Steps:**\n1. Test image upload (drag-drop, file selection, clipboard)\n2. Press Ctrl+V in text box to test smart pasting\n3. Try switching languages (Traditional Chinese/Simplified Chinese/English)\n4. Test command execution functionality\n5. Submit feedback and images\n\nPlease test these features and provide feedback!",
+    "terminalWelcome": "Welcome to Interactive Feedback Terminal\n========================================\nProject Directory: {sessionId}\nEnter commands and press Enter or click Execute button\nSupported commands: ls, dir, pwd, cat, type, etc.\n\n$ "
+  },
+  "about": {
+    "title": "ℹ️ About",
+    "description": "A powerful MCP server that provides human-in-the-loop interactive feedback functionality for AI-assisted development tools. Supports both Qt GUI and Web UI interfaces, with rich features including image upload, command execution, multi-language support, and more.",
+    "appInfo": "Application Information",
+    "version": "Version",
+    "projectLinks": "Project Links",
+    "githubProject": "GitHub Project",
+    "visitGithub": "Visit GitHub",
+    "contact": "Contact & Support",
+    "discordSupport": "Discord Support",
+    "joinDiscord": "Join Discord",
+    "contactDescription": "For technical support, issue reports, or feature suggestions, please contact us through Discord community or GitHub Issues.",
+    "thanks": "Thanks & Contributions",
+    "thanksText": "Thanks to the original author Fábio Ferreira (@fabiomlferreira) for creating the original interactive-feedback-mcp project.\n\nThis enhanced version is developed and maintained by Minidoracat, greatly expanding the project functionality with GUI interface, image support, multi-language capabilities, and many other improvements.\n\nSpecial thanks to sanshao85's mcp-feedback-collector project for UI design inspiration.\n\nOpen source collaboration makes technology better!"
+  },
+  "images": {
+    "settings": {
+      "title": "Image Settings",
+      "sizeLimit": "Image Size Limit",
+      "sizeLimitOptions": {
+        "unlimited": "Unlimited",
+        "1mb": "1MB",
+        "3mb": "3MB",
+        "5mb": "5MB"
+      },
+      "base64Detail": "Base64 Compatibility Mode",
+      "base64DetailHelp": "When enabled, includes full Base64 image data in text, improving compatibility with certain AI models",
+      "base64Warning": "⚠️ Increases transmission size",
+      "compatibilityHint": "💡 Images not recognized correctly?",
+      "enableBase64Hint": "Try enabling Base64 compatibility mode"
+    },
+    "sizeLimitExceeded": "Image {filename} size is {size}, exceeds {limit} limit!",
+    "sizeLimitExceededAdvice": "Consider compressing the image with editing software before uploading, or adjust the image size limit settings.",
+    "sizeLimitExceededSimple": "Image size exceeds limit ({limit})",
+    "processingError": "Image processing failed, please try again",
+    "removeImage": "Remove image"
+  },
+  "server": {
+    "feedback": {
+      "userFeedback": "User Feedback",
+      "commandLogs": "Command Execution Logs",
+      "imageAttachments": "Image Attachments Summary",
+      "imageCount": "User provided {count} images:",
+      "base64Preview": "Base64 Preview",
+      "base64Length": "Complete Base64 length: {length} characters",
+      "imageCompatNote": "💡 Note: If the AI assistant cannot display images, image data is included in the Base64 information above.",
+      "noContentMessage": "User provided no feedback content.",
+      "userCancelled": "User cancelled the feedback.",
+      "timeoutMessage": "Feedback collection timed out ({timeout} seconds), interface closed automatically."
+    }
+  },
+  "imagePreview": {
+    "tooltip": "Image: {filename}",
+    "loadError": "Unable to load image",
+    "generalError": "Loading error"
+  },
+  "ui": {
+    "command": {
+      "completed": "Command completed, exit code: {exit_code}"
+    },
+    "placeholders": {
+      "feedbackText": "Please enter your feedback here...",
+      "commandInput": "Enter command..."
+    },
+    "messages": {
+      "feedbackSubmitted": "Feedback submitted successfully!",
+      "sessionUpdated": "Session updated, refreshing content...",
+      "websocketError": "WebSocket connection failed, please refresh page",
+      "feedbackAlreadySubmitted": "Feedback already submitted, please wait for next MCP call",
+      "processing": "Processing, please wait...",
+      "requireContent": "Please provide feedback text or upload images",
+      "sendFailed": "Send failed, please try again",
+      "feedbackSent": "Feedback sent, waiting for next MCP call...",
+      "waitingForUser": "Waiting for user feedback...",
+      "imageSizeExceeded": "Image size exceeds limit",
+      "imageProcessFailed": "Image processing failed, please try again",
+      "confirmReset": "Are you sure you want to reset all settings?",
+      "commandError": "Error: {error}",
+      "pleaseEnterCommand": "⚠️ Please enter a command",
+      "websocketNotConnected": "❌ WebSocket not connected, cannot execute command",
+      "executing": "[Executing...]",
+      "commandSendFailed": "❌ Failed to send command: {error}",
+      "executeButton": "▶️ Execute",
+      "feedbackSubmittedLong": "✅ Feedback submitted successfully! Page will remain open for next call."
+    }
+  }
 }

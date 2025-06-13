@@ -357,5 +357,33 @@
       "foundAvailablePort": "🔍 Found available port: {port}",
       "findPortFailed": "❌ Failed to find available port: {error}"
     }
+  },
+  "server": {
+    "feedback": {
+      "userFeedback": "User Feedback",
+      "commandLogs": "Command Execution Logs",
+      "imageAttachments": "Image Attachments Summary",
+      "imageCount": "User provided {count} images:",
+      "base64Preview": "Base64 Preview",
+      "base64Length": "Complete Base64 length: {length} characters",
+      "imageCompatNote": "💡 Note: If the AI assistant cannot display images, image data is included in the Base64 information above.",
+      "noContentMessage": "User provided no feedback content.",
+      "userCancelled": "User cancelled the feedback.",
+      "timeoutMessage": "Feedback collection timed out ({timeout} seconds), interface closed automatically."
+    }
+  },
+  "imagePreview": {
+    "tooltip": "Image: {filename}",
+    "loadError": "Unable to load image",
+    "generalError": "Loading error"
+  },
+  "ui": {
+    "command": {
+      "completed": "Command completed, exit code: {exit_code}"
+    },
+    "placeholders": {
+      "feedbackText": "Please enter your feedback here...",
+      "commandInput": "Enter command..."
+    }
   }
 }

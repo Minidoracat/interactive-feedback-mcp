@@ -649,7 +649,9 @@ class FeedbackApp {
     async addImage(file) {
         // 檢查文件大小
         if (this.imageSizeLimit > 0 && file.size > this.imageSizeLimit) {
-            alert(`圖片大小超過限制 (${this.formatFileSize(this.imageSizeLimit)})`);
+            const limitText = this.formatFileSize(this.imageSizeLimit);
+            const message = window.i18nManager ? window.i18nManager.t('images.sizeLimitExceededSimple', { limit: limitText }) : `圖片大小超過限制 (${limitText})`;
+            alert(message);
             return;
         }
 
@@ -667,7 +669,8 @@ class FeedbackApp {
 
         } catch (error) {
             console.error('圖片處理失敗:', error);
-            alert('圖片處理失敗，請重試');
+            const message = window.i18nManager ? window.i18nManager.t('images.processingError') : '圖片處理失敗，請重試';
+            alert(message);
         }
     }
 
@@ -748,7 +751,7 @@ class FeedbackApp {
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'image-remove-btn';
                 removeBtn.textContent = '×';
-                removeBtn.title = '移除圖片';
+                removeBtn.title = window.i18nManager ? window.i18nManager.t('images.removeImage') : '移除圖片';
                 removeBtn.style.position = 'absolute';
                 removeBtn.style.top = '-8px';
                 removeBtn.style.right = '-8px';
@@ -1095,9 +1098,9 @@ class FeedbackApp {
 
                 if (event.code === 4004) {
                     // 沒有活躍會話
-                    this.updateConnectionStatus('disconnected', '沒有活躍會話');
+                    this.updateConnectionStatus('disconnected', window.i18nManager ? window.i18nManager.t('status.noActiveSession') : '沒有活躍會話');
                 } else {
-                    this.updateConnectionStatus('disconnected', '已斷開');
+                    this.updateConnectionStatus('disconnected', window.i18nManager ? window.i18nManager.t('status.disconnected') : '已斷開');
 
                     // 會話更新導致的正常關閉，立即重連
                     if (event.code === 1000 && event.reason === '會話更新') {
@@ -1118,19 +1121,19 @@ class FeedbackApp {
                         }, this.reconnectDelay);
                     } else if (this.reconnectAttempts >= this.maxReconnectAttempts) {
                         console.log('❌ 達到最大重連次數，停止重連');
-                        this.showMessage('WebSocket 連接失敗，請刷新頁面重試', 'error');
+                        this.showMessage(window.i18nManager ? window.i18nManager.t('errors.websocketConnectionFailed') : 'WebSocket 連接失敗，請刷新頁面重試', 'error');
                     }
                 }
             };
 
             this.websocket.onerror = (error) => {
                 console.error('WebSocket 錯誤:', error);
-                this.updateConnectionStatus('error', '連接錯誤');
+                this.updateConnectionStatus('error', window.i18nManager ? window.i18nManager.t('status.error') : '連接錯誤');
             };
 
         } catch (error) {
             console.error('WebSocket 連接失敗:', error);
-            this.updateConnectionStatus('error', '連接失敗');
+            this.updateConnectionStatus('error', window.i18nManager ? window.i18nManager.t('status.connectionFailed') : '連接失敗');
         }
     }
 
@@ -1194,11 +1197,13 @@ class FeedbackApp {
                 this.appendCommandOutput(data.output);
                 break;
             case 'command_complete':
-                this.appendCommandOutput(`\n[命令完成，退出碼: ${data.exit_code}]\n`);
+                const completeMsg = window.i18nManager ? window.i18nManager.t('commands.completedWithCode', { exitCode: data.exit_code }) : `命令完成，退出碼: ${data.exit_code}`;
+                this.appendCommandOutput(`\n[${completeMsg}]\n`);
                 this.enableCommandInput();
                 break;
             case 'command_error':
-                this.appendCommandOutput(`\n[錯誤: ${data.error}]\n`);
+                const errorMsg = window.i18nManager ? window.i18nManager.t('commands.commandError', { error: data.error }) : `錯誤: ${data.error}`;
+                this.appendCommandOutput(`\n[${errorMsg}]\n`);
                 this.enableCommandInput();
                 break;
             case 'feedback_received':
@@ -1224,10 +1229,12 @@ class FeedbackApp {
         this.lastSubmissionTime = Date.now();
 
         // 顯示成功訊息
-        this.showSuccessMessage(data.message || '回饋提交成功！');
+        const successMsg = data.message || (window.i18nManager ? window.i18nManager.t('feedback.success') : '回饋提交成功！');
+        this.showSuccessMessage(successMsg);
 
         // 更新 AI 摘要區域顯示「已送出反饋」狀態
-        this.updateSummaryStatus('已送出反饋，等待下次 MCP 調用...');
+        const statusMsg = window.i18nManager ? window.i18nManager.t('status.submitted.waitingNext') : '已送出反饋，等待下次 MCP 調用...';
+        this.updateSummaryStatus(statusMsg);
 
         // 重構：不再自動關閉頁面，保持持久性
         console.log('反饋已提交，頁面保持開啟狀態');
@@ -1237,7 +1244,8 @@ class FeedbackApp {
         console.log('🔄 處理會話更新:', data.session_info);
 
         // 顯示更新通知
-        this.showSuccessMessage(data.message || '會話已更新，正在局部更新內容...');
+        const updateMsg = data.message || (window.i18nManager ? window.i18nManager.t('status.processing.pleaseWait') : '會話已更新，正在局部更新內容...');
+        this.showSuccessMessage(updateMsg);
 
         // 更新會話信息
         if (data.session_info) {
@@ -1830,7 +1838,7 @@ class FeedbackApp {
         }
 
         if (!feedback && this.images.length === 0) {
-            this.showMessage('請提供回饋文字或上傳圖片', 'warning');
+            this.showMessage(window.i18nManager ? window.i18nManager.t('feedback.requireInput') : '請提供回饋文字或上傳圖片', 'warning');
             return null;
         }
 
@@ -1869,7 +1877,7 @@ class FeedbackApp {
 
         } catch (error) {
             console.error('❌ 發送回饋失敗:', error);
-            this.showMessage('發送失敗，請重試', 'error');
+            this.showMessage(window.i18nManager ? window.i18nManager.t('feedback.sendFailed') : '發送失敗，請重試', 'error');
             // 恢復到等待狀態
             this.setFeedbackState('waiting_for_feedback');
         }
@@ -1913,12 +1921,12 @@ class FeedbackApp {
         const command = commandInput?.value.trim();
 
         if (!command) {
-            this.appendCommandOutput('⚠️ 請輸入命令\n');
+            this.appendCommandOutput(window.i18nManager ? window.i18nManager.t('commands.pleaseEnterCommand') : '⚠️ 請輸入命令\n');
             return;
         }
 
         if (!this.isConnected) {
-            this.appendCommandOutput('❌ WebSocket 未連接，無法執行命令\n');
+            this.appendCommandOutput(window.i18nManager ? window.i18nManager.t('commands.websocketNotConnected') : '❌ WebSocket 未連接，無法執行命令\n');
             return;
         }
 
@@ -1934,10 +1942,10 @@ class FeedbackApp {
 
             // 清空輸入框
             commandInput.value = '';
-            this.appendCommandOutput('[正在執行...]\n');
+            this.appendCommandOutput(window.i18nManager ? window.i18nManager.t('commands.executing') : '[正在執行...]\n');
 
         } catch (error) {
-            this.appendCommandOutput(`❌ 發送命令失敗: ${error.message}\n`);
+            this.appendCommandOutput(window.i18nManager ? window.i18nManager.t('commands.commandSendFailed', { error: error.message }) : `❌ 發送命令失敗: ${error.message}\n`);
         }
     }
 
@@ -1956,7 +1964,7 @@ class FeedbackApp {
         if (commandInput) commandInput.disabled = false;
         if (runCommandBtn) {
             runCommandBtn.disabled = false;
-            runCommandBtn.textContent = '▶️ 執行';
+            runCommandBtn.textContent = window.i18nManager ? window.i18nManager.t('buttons.runCommand') : '▶️ 執行';
         }
     }
 
