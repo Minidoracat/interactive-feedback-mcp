@@ -44,7 +44,7 @@ class ImagePreviewWidget(QLabel):
                 background-color: #383838;
             }
         """)
-        self.setToolTip(f"圖片: {os.path.basename(self.image_path)}")
+        self.setToolTip(t('imagePreview.tooltip', filename=os.path.basename(self.image_path)))
     
     def _load_image(self) -> None:
         """載入並顯示圖片"""
@@ -55,10 +55,10 @@ class ImagePreviewWidget(QLabel):
                 self.setPixmap(scaled_pixmap)
                 self.setAlignment(Qt.AlignCenter)
             else:
-                self.setText("無法載入圖片")
+                self.setText(t('imagePreview.loadError'))
                 self.setAlignment(Qt.AlignCenter)
         except Exception:
-            self.setText("載入錯誤")
+            self.setText(t('imagePreview.generalError'))
             self.setAlignment(Qt.AlignCenter)
     
     def _create_delete_button(self) -> None:

@@ -192,26 +192,14 @@
         "确认防火墙设置",
         "尝试重新启动应用程序"
       ],
-      "file_io": [
-        "检查文件是否存在",
-        "确认文件权限",
-        "检查磁盘空间是否足够"
-      ],
+      "file_io": ["检查文件是否存在", "确认文件权限", "检查磁盘空间是否足够"],
       "process": [
         "检查进程是否正在运行",
         "确认系统资源是否足够",
         "尝试重新启动相关服务"
       ],
-      "timeout": [
-        "增加超时时间设置",
-        "检查网络延迟",
-        "稍后重试操作"
-      ],
-      "permission": [
-        "以管理员身份运行",
-        "检查文件/目录权限",
-        "联系系统管理员"
-      ]
+      "timeout": ["增加超时时间设置", "检查网络延迟", "稍后重试操作"],
+      "permission": ["以管理员身份运行", "检查文件/目录权限", "联系系统管理员"]
     }
   },
   "aiSummary": "AI 工作摘要",
@@ -352,5 +340,33 @@
     "contactDescription": "如需技术支持、问题反馈或功能建议，欢迎通过 Discord 社群或 GitHub Issues 与我们联系。",
     "thanks": "致谢与贡献",
     "thanksText": "感谢原作者 Fábio Ferreira (@fabiomlferreira) 创建了原始的 interactive-feedback-mcp 项目。\n\n本增强版本由 Minidoracat 开发和维护，大幅扩展了项目功能，新增了 GUI 界面、图片支持、多语言能力以及许多其他改进功能。\n\n同时感谢 sanshao85 的 mcp-feedback-collector 项目提供的 UI 设计灵感。\n\n开源协作让技术变得更美好！"
+  },
+  "server": {
+    "feedback": {
+      "userFeedback": "用户反馈",
+      "commandLogs": "命令执行日志",
+      "imageAttachments": "图片附件概要",
+      "imageCount": "用户提供了 {count} 张图片：",
+      "base64Preview": "Base64 预览",
+      "base64Length": "完整 Base64 长度: {length} 字符",
+      "imageCompatNote": "💡 注意：如果 AI 助手无法显示图片，图片数据已包含在上述 Base64 信息中。",
+      "noContentMessage": "用户未提供任何反馈内容。",
+      "userCancelled": "用户取消了反馈。",
+      "timeoutMessage": "反馈收集超时（{timeout}秒），界面已自动关闭。"
+    }
+  },
+  "imagePreview": {
+    "tooltip": "图片: {filename}",
+    "loadError": "无法载入图片",
+    "generalError": "载入错误"
+  },
+  "ui": {
+    "command": {
+      "completed": "命令完成，退出码: {exit_code}"
+    },
+    "placeholders": {
+      "feedbackText": "请在这里输入您的反馈...",
+      "commandInput": "输入命令..."
+    }
   }
 }

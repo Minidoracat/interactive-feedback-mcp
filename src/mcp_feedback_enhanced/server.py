@@ -33,7 +33,7 @@ from mcp.types import TextContent
 from pydantic import Field
 
 # 導入多語系支援
-from .i18n import get_i18n_manager
+from .i18n import get_i18n_manager, t
 
 # 導入統一的調試功能
 from .debug import server_debug_log as debug_log
@@ -290,16 +290,16 @@ def create_feedback_text(feedback_data: dict) -> str:
     
     # 基本回饋內容
     if feedback_data.get("interactive_feedback"):
-        text_parts.append(f"=== 用戶回饋 ===\n{feedback_data['interactive_feedback']}")
+        text_parts.append(f"=== {t('server.feedback.userFeedback')} ===\n{feedback_data['interactive_feedback']}")
     
     # 命令執行日誌
     if feedback_data.get("command_logs"):
-        text_parts.append(f"=== 命令執行日誌 ===\n{feedback_data['command_logs']}")
+        text_parts.append(f"=== {t('server.feedback.commandLogs')} ===\n{feedback_data['command_logs']}")
     
     # 圖片附件概要
     if feedback_data.get("images"):
         images = feedback_data["images"]
-        text_parts.append(f"=== 圖片附件概要 ===\n用戶提供了 {len(images)} 張圖片：")
+        text_parts.append(f"=== {t('server.feedback.imageAttachments')} ===\n{t('server.feedback.imageCount', count=len(images))}")
         
         for i, img in enumerate(images, 1):
             size = img.get("size", 0)
@@ -330,8 +330,8 @@ def create_feedback_text(feedback_data: dict) -> str:
                     if img_base64:
                         # 只顯示前50個字符的預覽
                         preview = img_base64[:50] + "..." if len(img_base64) > 50 else img_base64
-                        img_info += f"\n     Base64 預覽: {preview}"
-                        img_info += f"\n     完整 Base64 長度: {len(img_base64)} 字符"
+                        img_info += f"\n     {t('server.feedback.base64Preview')}: {preview}"
+                        img_info += f"\n     {t('server.feedback.base64Length', length=len(img_base64))}"
                         
                         # 如果 AI 助手不支援 MCP 圖片，可以提供完整 base64
                         debug_log(f"圖片 {i} Base64 已準備，長度: {len(img_base64)}")
@@ -359,9 +359,9 @@ def create_feedback_text(feedback_data: dict) -> str:
             text_parts.append(img_info)
         
         # 添加兼容性說明
-        text_parts.append("\n💡 注意：如果 AI 助手無法顯示圖片，圖片數據已包含在上述 Base64 信息中。")
+        text_parts.append(f"\n{t('server.feedback.imageCompatNote')}")
     
-    return "\n\n".join(text_parts) if text_parts else "用戶未提供任何回饋內容。"
+    return "\n\n".join(text_parts) if text_parts else t('server.feedback.noContentMessage')
 
 
 def process_images(images_data: List[dict]) -> List[MCPImage]:
@@ -529,7 +529,7 @@ async def interactive_feedback(
         
         # 處理取消情況
         if not result:
-            return [TextContent(type="text", text="用戶取消了回饋。")]
+            return [TextContent(type="text", text=t('server.feedback.userCancelled'))]
         
         # 儲存詳細結果
         save_feedback_to_file(result)
@@ -551,7 +551,7 @@ async def interactive_feedback(
         
         # 確保至少有一個回饋項目
         if not feedback_items:
-            feedback_items.append(TextContent(type="text", text="用戶未提供任何回饋內容。"))
+            feedback_items.append(TextContent(type="text", text=t('server.feedback.noContentMessage')))
         
         debug_log(f"回饋收集完成，共 {len(feedback_items)} 個項目")
         return feedback_items
@@ -618,7 +618,7 @@ async def launch_web_ui_with_timeout(project_dir: str, summary: str, timeout: in
 
         return {
             "command_logs": "",
-            "interactive_feedback": f"回饋收集超時（{timeout}秒），介面已自動關閉。",
+            "interactive_feedback": t('server.feedback.timeoutMessage', timeout=timeout),
             "images": []
         }
     except Exception as e:
