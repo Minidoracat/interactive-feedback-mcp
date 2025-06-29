@@ -334,7 +334,7 @@ class WebUIManager:
         if old_session and old_session.websocket:
             old_websocket = old_session.websocket
             debug_log("保存舊會話的 WebSocket 連接以發送更新通知")
-
+            old_session.next_step("反饋處理完成")
         # 創建新會話
         session_id = str(uuid.uuid4())
         session = WebFeedbackSession(session_id, project_directory, summary)
