@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/minidoracat-mcp-feedback-enhanced-badge.png)](https://mseep.ai/app/minidoracat-mcp-feedback-enhanced)
+
 # MCP Feedback Enhanced
 
 **🌐 Language / 語言切換:** **English** | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
