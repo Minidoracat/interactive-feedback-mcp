@@ -763,7 +763,11 @@
         // 更新 AI 摘要區域顯示「已送出反饋」狀態
         const submittedMessage = window.i18nManager ? window.i18nManager.t('feedback.submittedWaiting') : '已送出反饋，等待下次 MCP 調用...';
         this.updateSummaryStatus(submittedMessage);
-        
+
+        // 刷新會話列表以顯示最新狀態
+        console.log('🔄 反饋提交成功，刷新會話列表');
+        this.refreshSessionList();
+
         // 執行提交回饋後的自動命令
         this.executeAutoCommandOnFeedbackSubmit();
 
@@ -780,6 +784,7 @@
         // 如果有會話管理器，觸發數據刷新
         if (this.sessionManager && this.sessionManager.dataManager) {
             console.log('🔄 刷新會話列表以顯示最新狀態');
+            // 然後從服務器加載最新數據
             this.sessionManager.dataManager.loadFromServer();
         } else {
             console.log('⚠️ 會話管理器未初始化，跳過會話列表刷新');
@@ -851,29 +856,90 @@
                 window.MCPFeedback.Utils.CONSTANTS.MESSAGE_SUCCESS
             );
 
-            // 局部更新頁面內容而非開啟新視窗
+            // 智能選擇更新策略：音效通知啟用時使用局部更新，否則使用 window.open
             const self = this;
             setTimeout(function() {
-                console.log('🔄 執行局部更新頁面內容');
+                // 檢查音效通知是否啟用
+                const audioNotificationEnabled = self.audioManager &&
+                    self.audioManager.currentAudioSettings &&
+                    self.audioManager.currentAudioSettings.enabled;
 
-                // 1. 更新會話資訊
-                if (data.session_info) {
-                    self.currentSessionId = data.session_info.session_id;
-                    console.log('📋 新會話 ID:', self.currentSessionId);
+                if (audioNotificationEnabled) {
+                    console.log('🔊 音效通知已啟用，使用局部更新策略');
+
+                    // 使用局部更新方案
+                    // 1. 更新會話資訊
+                    if (data.session_info) {
+                        self.currentSessionId = data.session_info.session_id;
+                        console.log('📋 新會話 ID:', self.currentSessionId);
+                    }
+
+                    // 2. 刷新頁面內容（AI 摘要、表單等）
+                    self.refreshPageContent();
+
+                    // 3. 重置表單狀態
+                    self.clearFeedback();
+
+                } else {
+                    console.log('🔇 音效通知未啟用，使用 window.open 策略');
+
+                    try {
+                        // 嘗試打開新標籤頁
+                        const newWindow = window.open(window.location.href, '_blank');
+
+                        if (newWindow) {
+                            console.log('✅ 新標籤頁打開成功，準備關閉當前標籤頁');
+
+                            // 短暫延遲後關閉當前標籤頁
+                            setTimeout(function() {
+                                console.log('🔄 關閉當前標籤頁');
+                                window.close();
+                            }, 800); // 給新標籤頁一些時間加載
+
+                        } else {
+                            console.warn('❌ window.open 被阻止，回退到局部更新');
+
+                            // 回退到局部更新方案
+                            // 1. 更新會話資訊
+                            if (data.session_info) {
+                                self.currentSessionId = data.session_info.session_id;
+                                console.log('📋 新會話 ID:', self.currentSessionId);
+                            }
+
+                            // 2. 刷新頁面內容（AI 摘要、表單等）
+                            self.refreshPageContent();
+
+                            // 3. 重置表單狀態
+                            self.clearFeedback();
+                        }
+                    } catch (error) {
+                        console.error('❌ window.open 執行失敗:', error);
+
+                        // 回退到局部更新方案
+                        // 1. 更新會話資訊
+                        if (data.session_info) {
+                            self.currentSessionId = data.session_info.session_id;
+                            console.log('📋 新會話 ID:', self.currentSessionId);
+                        }
+
+                        // 2. 刷新頁面內容（AI 摘要、表單等）
+                        self.refreshPageContent();
+
+                        // 3. 重置表單狀態
+                        self.clearFeedback();
+                    }
                 }
 
-                // 2. 刷新頁面內容（AI 摘要、表單等）
-                self.refreshPageContent();
+                 // 4. 強制刷新會話列表（新會話創建時）
+                    console.log('🔄 新會話創建，強制刷新會話列表');
+                    self.refreshSessionList(true);
 
-                // 3. 重置表單狀態
-                self.clearFeedback();
-
-                // 4. 重置回饋狀態為等待中
+                // 5. 重置回饋狀態為等待中
                 if (self.uiManager) {
                     self.uiManager.setFeedbackState(window.MCPFeedback.Utils.CONSTANTS.FEEDBACK_WAITING, self.currentSessionId);
                 }
                 
-                // 5. 重新啟動會話超時計時器（如果已啟用）
+                // 6. 重新啟動會話超時計時器（如果已啟用）
                 if (self.settingsManager && self.settingsManager.get('sessionTimeoutEnabled')) {
                     console.log('🔄 新會話創建，重新啟動會話超時計時器');
                     const timeoutSettings = {
@@ -883,7 +949,7 @@
                     self.webSocketManager.updateSessionTimeoutSettings(timeoutSettings);
                 }
 
-                // 6. 檢查並啟動自動提交
+                // 7. 檢查並啟動自動提交
                 self.checkAndStartAutoSubmit();
 
                 console.log('✅ 局部更新完成，頁面已準備好接收新的回饋');

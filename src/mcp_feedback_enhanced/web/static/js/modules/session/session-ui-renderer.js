@@ -395,9 +395,11 @@
 
         const self = this;
 
-        // 檢查數據是否有變化（簡單比較長度）
-        if (self.lastRenderedData.historyLength === sessionHistory.length) {
-            // 長度沒有變化，跳過渲染（可以進一步優化為深度比較）
+        // 檢查數據是否有變化（比較長度和狀態）
+        const currentHistoryHash = self.calculateHistoryHash(sessionHistory);
+        if (self.lastRenderedData.historyLength === sessionHistory.length &&
+            self.lastRenderedData.historyHash === currentHistoryHash) {
+            // 長度和狀態都沒有變化，跳過渲染
             return;
         }
 
@@ -413,6 +415,20 @@
     };
 
     /**
+     * 計算會話歷史的哈希值（用於檢測狀態變化）
+     */
+    SessionUIRenderer.prototype.calculateHistoryHash = function(sessionHistory) {
+        if (!sessionHistory || sessionHistory.length === 0) {
+            return 'empty';
+        }
+
+        // 計算基於會話 ID 和狀態的簡單哈希
+        return sessionHistory.map(session =>
+            `${session.session_id}:${session.status}:${session.feedback_completed}`
+        ).join('|');
+    };
+
+    /**
      * 執行實際的會話歷史渲染
      */
     SessionUIRenderer.prototype._performHistoryRender = function(sessionHistory) {
@@ -420,6 +436,7 @@
 
         // 更新快取
         this.lastRenderedData.historyLength = sessionHistory.length;
+        this.lastRenderedData.historyHash = this.calculateHistoryHash(sessionHistory);
 
         // 清空現有內容
         DOMUtils.clearElement(this.historyList);
